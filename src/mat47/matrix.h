@@ -18,4 +18,24 @@ extern _Bool MAT47_DEBUG;
  */
 extern FILE *MAT47_LOG_FILE;
 
+/* The matrix type */
+typedef struct {
+    unsigned int n_rows;
+    unsigned int n_cols;
+    double **data;
+} mat47_t;
+
+/* Creates a new zero matrix.
+ *
+ * PARAMETERS:
+ * - n_rows: Number of rows; 1 <= n_rows <= UINT_MAX
+ * - n_cols: Number of columns; 1 <= n_cols <= UINT_MAX
+ *
+ * RETURN VALUE:
+ * - A null pointer, if either argument equals zero or a failure occurs during memory
+ *   allocation.
+ * - Otherwise, a pointer to a newly allocated matrix.
+ */
+mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols);
+
 #endif
