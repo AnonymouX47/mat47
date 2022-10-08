@@ -41,7 +41,7 @@ mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols)
     data = m->data;
     for (unsigned int i = 0; i < n_rows; i++)
         if (!(data[i] = calloc(sizeof(double), n_cols))) {
-            mat47_free(m);
+            mat47_del(m);
             mat47_log("Failed to allocate rows");
             return NULL;
         }
@@ -53,4 +53,20 @@ mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols)
     );
 
     return m;
+}
+
+
+void *mat47_del(mat47_t *m)
+{
+    if (m) {
+        if (m->data) {
+            double **data = m->data;
+            unsigned int n_rows = m->n_rows;
+
+            for (unsigned int i = 0; i < n_rows; i++) free(data[i]);
+            free(m->data);
+        }
+        free(m);
+        mat47_log("Deallocated matrix @ %p", m);
+    }
 }

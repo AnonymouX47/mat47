@@ -25,6 +25,20 @@ typedef struct {
     double **data;
 } mat47_t;
 
+/* Deallocates a matrix.
+ *
+ * PARAMETERS:
+ * - m: The matrix to be deallocated
+ *
+ * RETURN VALUE:
+ * - A null pointer, if either argument equals zero or a failure occurs during memory
+ *   allocation.
+ * - Otherwise, a pointer to a newly allocated matrix.
+ *
+ * NOTE: This must be called to deallocate the memory internally used by a matrix.
+ */
+void *mat47_del(mat47_t *m);
+
 /* Creates a new zero matrix.
  *
  * PARAMETERS:
