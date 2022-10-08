@@ -7,8 +7,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#ifndef MAT47_UTILS
-#define MAT47_UTILS
+#ifndef MAT47_UTILS_H
+#define MAT47_UTILS_H
 
 #define mat47_log(msg, ...) (MAT47_DEBUG && \
     fprintf( \

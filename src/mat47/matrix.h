@@ -7,8 +7,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#ifndef MAT47
-#define MAT47
+#ifndef MAT47_H
+#define MAT47_H
 
 /* The default element format specifier */
 #define MAT47_ELEM_FMT "%.4g"
