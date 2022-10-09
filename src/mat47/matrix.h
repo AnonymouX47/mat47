@@ -89,6 +89,6 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
  *       memory allocation.
  *     - Otherwise, a pointer to a newly allocated matrix.
  */
-mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols);
+mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols);
 
 #endif

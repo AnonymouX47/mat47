@@ -4,6 +4,7 @@
  * See https://github.com/AnonymouX47/mat47/LICENCE for license information.
  */
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +14,23 @@
 #include "utils.h"
 
 
-mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols)
+/* Allocates memory for a new matrix.
+ *
+ * Args:
+ *     n_rows: Number of rows; 1 <= n_rows <= UINT_MAX
+ *     n_cols: Number of columns; 1 <= n_cols <= UINT_MAX
+ *     zero: If true, all the matrix' elements are initialized to 0.0.
+ *       Otherwise, the elements are uninitialized.
+ *
+ * Returns:
+ *     - A null pointer, if either argument equals zero or a failure occurs during
+ *       memory allocation.
+ *     - Otherwise, a pointer to a newly allocated matrix.
+ *
+ * Note:
+ *     Allocation of zeroed memory takes longer (tested).
+ */
+static mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols, bool zero)
 {
     double **data;
 
@@ -43,19 +60,27 @@ mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols)
 
     data = m->data;
     for (unsigned int i = 0; i < n_rows; i++)
-        if (!(data[i] = calloc(sizeof(double), n_cols))) {
+        if (!(data[i] = (
+            zero ? calloc(sizeof(double), n_cols) : malloc(sizeof(double) * n_cols)
+        ))) {
             mat47_del(m);
             mat47_log("Failed to allocate rows");
             return NULL;
         }
 
-    mat47_log("Allocated rows");
+    mat47_log("Allocated rows, zero=%u", zero);
     mat47_log(
         "[1, 1] = %f, [%d, %d] = %f",
         data[0][0], n_rows, n_cols, data[n_rows - 1][n_cols - 1]
     );
 
     return m;
+}
+
+
+mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols)
+{
+    return mat47_new(n_rows, n_cols, true);
 }
 
 
