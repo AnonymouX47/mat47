@@ -13,6 +13,8 @@
 #include "matrix.h"
 #include "utils.h"
 
+#define uint unsigned int  // Used only where necessary, to avoid long lines
+
 
 /* Allocates memory for a new matrix.
  *
@@ -82,6 +84,104 @@ mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols)
 {
     return mat47_new(n_rows, n_cols, true);
 }
+
+
+#define restrict_p_p *restrict *restrict
+#define init(n_rows, n_cols, array) \
+    mat47_t *m; \
+    double **data, *data_row; \
+    restrict typeof(*array) row; \
+\
+    if (!array) { \
+        mat47_log("`array` is null"); \
+        return NULL; \
+    } \
+    if (!(m = mat47_new(n_rows, n_cols, false))) return NULL; \
+\
+    data = m->data; \
+    while (n_rows--) { \
+        if (!(row = array[n_rows])) { \
+            mat47_log("`array[%u]` is null", n_rows); \
+            mat47_del(m); \
+            return NULL; \
+        } \
+        data_row = data[n_rows]; \
+        for (unsigned int j = 0; j < n_cols; j++) \
+            data_row[j] = row[j]; \
+    } \
+\
+    return m;
+
+mat47_t *mat47_init_int8(uint n_rows, uint n_cols, int8_t restrict_p_p array)
+{
+    init(n_rows, n_cols, array)
+}
+
+mat47_t *mat47_init_int16(uint n_rows, uint n_cols, int16_t restrict_p_p array)
+{
+    init(n_rows, n_cols, array)
+}
+
+mat47_t *mat47_init_int32(uint n_rows, uint n_cols, int32_t restrict_p_p array)
+{
+    init(n_rows, n_cols, array)
+}
+
+mat47_t *mat47_init_int64(uint n_rows, uint n_cols, int64_t restrict_p_p array)
+{
+    init(n_rows, n_cols, array)
+}
+
+mat47_t *mat47_init_uint8(uint n_rows, uint n_cols, uint8_t restrict_p_p array)
+{
+    init(n_rows, n_cols, array)
+}
+
+mat47_t *mat47_init_uint16(uint n_rows, uint n_cols, uint16_t restrict_p_p array)
+{
+    init(n_rows, n_cols, array)
+}
+
+mat47_t *mat47_init_uint32(uint n_rows, uint n_cols, uint32_t restrict_p_p array)
+{
+    init(n_rows, n_cols, array)
+}
+
+mat47_t *mat47_init_uint64(uint n_rows, uint n_cols, uint64_t restrict_p_p array)
+{
+    init(n_rows, n_cols, array)
+}
+
+mat47_t *mat47_init_float(uint n_rows, uint n_cols, float restrict_p_p array)
+{
+    init(n_rows, n_cols, array)
+}
+
+mat47_t *mat47_init_double(uint n_rows, uint n_cols, double restrict_p_p array)
+{
+    mat47_t *m;
+    double **data, *restrict row;
+
+    if (!array) {
+        mat47_log("`array` is null");
+        return NULL;
+    }
+    if (!(m = mat47_new(n_rows, n_cols, false))) return NULL;
+
+    data = m->data;
+    while (n_rows--) {
+        if (!(row = array[n_rows])) {
+            mat47_log("`array[%u]` is null", n_rows);
+            mat47_del(m);
+            return NULL;
+        }
+        memcpy(data[n_rows], row, sizeof(double) * n_cols);
+    }
+
+    return m;
+}
+
+#undef restrict_p_p
 
 
 void *mat47_del(mat47_t *m)
