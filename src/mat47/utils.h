@@ -42,4 +42,4 @@ uintmax_t usum16(unsigned int n, uint16_t arr[]);
 uintmax_t usum32(unsigned int n, uint32_t arr[]);
 uintmax_t usum64(unsigned int n, uint64_t arr[]);
 
-#endif
+#endif  // MAT47_UTILS_H

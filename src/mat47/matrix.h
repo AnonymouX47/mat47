@@ -16,15 +16,6 @@
 /** The default element format specifier */
 #define MAT47_ELEM_FMT "%.4g"
 
-/** Like `mat47_fprintf()` but with *format* set to `MAT47_ELEM_FMT` */
-#define mat47_fprint(m, stream) mat47_fprintf(m, stream, MAT47_ELEM_FMT)
-
-/** Like `mat47_fprintf()` but with *stream* set to `stdout` */
-#define mat47_printf(m, format) mat47_fprintf(m, stdout, format)
-
-/** Like `mat47_printf()` but with *format* set to `MAT47_ELEM_FMT` */
-#define mat47_print(m) mat47_printf(m, MAT47_ELEM_FMT)
-
 /** Enables/Disables library-wide debugging (disabled by default). */
 extern _Bool MAT47_DEBUG;
 
@@ -93,6 +84,9 @@ void *mat47_del(mat47_t *m);
  */
 intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict format);
 
+/** Like `mat47_fprintf()` but with *format* set to `MAT47_ELEM_FMT` */
+#define mat47_fprint(m, stream) mat47_fprintf(m, stream, MAT47_ELEM_FMT)
+
 /**
  * Creates a new matrix and initializes it from the given array.
  *
@@ -145,6 +139,12 @@ mat47_t *mat47_init_float(uint n_rows, uint n_cols, float restrict_p_p array);
 mat47_t *mat47_init_double(uint n_rows, uint n_cols, double restrict_p_p array);
 #undef restrict_p_p
 
+/** Like `mat47_fprintf()` but with *stream* set to `stdout` */
+#define mat47_printf(m, format) mat47_fprintf(m, stdout, format)
+
+/** Like `mat47_printf()` but with *format* set to `MAT47_ELEM_FMT` */
+#define mat47_print(m) mat47_printf(m, MAT47_ELEM_FMT)
+
 /**
  * Creates a new zero matrix.
  *
@@ -161,4 +161,4 @@ mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols);
 
 #undef uint
 
-#endif
+#endif  // MAT47_H
