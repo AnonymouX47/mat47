@@ -219,19 +219,33 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
 
     double *restrict row, **restrict data = m->data;
     unsigned int i, j, n_rows = m->n_rows, n_cols = m->n_cols;
-    char (*row_str)[ELEM_MAX_LEN + 1],  // 1 = '\0'
-         mat_str[n_rows][n_cols][ELEM_MAX_LEN + 1],  // 1 = '\0'
+    intmax_t n_bytes = 0;
+
+    mat47_log("Printing matrix @ %p; n_rows=%u, n_cols=%u", m, n_rows, n_cols);
+
+    char *mat_str[n_rows],
+         (*row_str)[ELEM_MAX_LEN + 1],
          // 6 = '|' + ' ' + '%' + 's' + ' ' + '\0'
          col_fmt[n_cols][ELEM_MAX_LEN_NDIGITS + 6];
     unsigned char col_widths[n_cols];
-    intmax_t n_bytes = 0;
 
-    mat47_log("Printing matrix @ %p", m);
+    // Allocating rows separately to avoid failures for large matrices.
+    // Also, **not** allocating per element reduces the number of allocations and
+    // helps to avoid an extra level of indirection.
+    for (i = n_rows; i--;) {
+        if (!(mat_str[i] = malloc((ELEM_MAX_LEN + 1) * sizeof(char) * n_cols))) {
+            while (++i < n_rows) free(mat_str[i]);  // Deallocate allocated rows
+            mat47_log("Unable to allocate memory for element strings");
+            return -1;
+        }
+    }
+
+    mat47_log("Allocated memory to print matrix");
 
     memset(col_widths, 0, n_cols * sizeof(*col_widths));
     for (i = 0; i < n_rows; i++) {
         row = data[i];
-        row_str = mat_str[i];
+        row_str = (char (*)[ELEM_MAX_LEN + 1])mat_str[i];
         for (j = 0; j < n_cols; j++)
             imax(
                 col_widths[j],
@@ -242,10 +256,14 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
             );
     }
 
-    mat47_log("Formatted elements");
     mat47_log(
-        "[1, 1] = %s, [%d, %d] = %s",
-        mat_str[0][0], n_rows, n_cols, mat_str[n_rows - 1][n_cols - 1]
+        "Formatted elements: "
+        "[1, 1] = \"%s\" (%f), [1, 2] = \"%s\" (%f), [%d, %d] = \"%s\" (%f)",
+        mat_str[0], data[0][0],
+        mat_str[0] + (ELEM_MAX_LEN + 1), data[0][1],
+        n_rows, n_cols,
+        mat_str[n_rows - 1] + ((n_cols - 1) * (ELEM_MAX_LEN + 1)),
+        data[n_rows - 1][n_cols - 1]
     );
 
     for (j = 0; j < n_cols; j++)
@@ -278,15 +296,20 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
     }
     strcpy(line - 1, "|\n\0");  // Overwrites the last '+' (line - 1)
 
+    mat47_log("Writing to file");
+
     n_bytes += fprintf(stream, bar);
     for (i = 0; i < n_rows; i++) {
-        row_str = mat_str[i];
+        row_str = (char (*)[ELEM_MAX_LEN + 1])mat_str[i];
         for (j = 0; j < n_cols; j++)
             n_bytes += fprintf(stream, col_fmt[j], row_str[j]);
         n_bytes += fprintf(stream, "|\n");
         if (i < n_rows - 1) n_bytes += fprintf(stream, mid_bar);
     }
     n_bytes += fprintf(stream, bar);
+
+    for (i = n_rows; i--;) free(mat_str[i]);
+    mat47_log("Deallocated memory for element strings");
 
     return n_bytes;
 }

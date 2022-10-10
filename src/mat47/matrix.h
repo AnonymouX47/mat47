@@ -77,7 +77,9 @@ void *mat47_del(mat47_t *m);
  *     format: A valid format specifier for a `double`, to be applied to every element
  *
  * Returns:
- *     - `-1`, if any argument is null.
+ *     - `-1`, if:
+ *       - any argument is null, or
+ *       - a failure occurs during memory allocation.
  *     - Otherwise, the amount of characters written to the stream.
  *
  * Note:
