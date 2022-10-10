@@ -185,6 +185,12 @@ mat47_t *mat47_init_double(uint n_rows, uint n_cols, double restrict_p_p array)
 #undef restrict_p_p
 
 
+mat47_t *mat47_copy(mat47_t *m)
+{
+    return mat47_init_double(m->n_rows, m->n_cols, m->data);
+}
+
+
 void *mat47_del(mat47_t *m)
 {
     if (m) {

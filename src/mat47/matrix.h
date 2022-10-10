@@ -45,6 +45,18 @@ typedef struct {
 } mat47_t;
 
 /**
+ * Copies a matrix.
+ *
+ * Args:
+ *     m: The source matrix
+ *
+ * Returns:
+ *     - A null pointer, if a failure occurs during memory allocation.
+ *     - Otherwise, a pointer to a **deep** copy of *m*.
+ */
+mat47_t *mat47_copy(mat47_t *m);
+
+/**
  * Deallocates memory used by a matrix.
  *
  * Args:
