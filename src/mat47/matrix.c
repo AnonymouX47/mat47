@@ -16,16 +16,17 @@
 #define uint unsigned int  // Used only where necessary, to avoid long lines
 
 
-/* Allocates memory for a new matrix.
+/**
+ * Allocates memory for a new matrix.
  *
  * Args:
- *     n_rows: Number of rows; 1 <= n_rows <= UINT_MAX
- *     n_cols: Number of columns; 1 <= n_cols <= UINT_MAX
+ *     n_rows: Number of rows
+ *     n_cols: Number of columns
  *     zero: If true, all the matrix' elements are initialized to 0.0.
  *       Otherwise, the elements are uninitialized.
  *
  * Returns:
- *     - A null pointer, if either argument equals zero or a failure occurs during
+ *     - A null pointer, if either dimension equals zero or a failure occurs during
  *       memory allocation.
  *     - Otherwise, a pointer to a newly allocated matrix.
  *

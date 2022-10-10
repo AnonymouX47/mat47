@@ -10,25 +10,26 @@
 #ifndef MAT47_H
 #define MAT47_H
 
-#define uint unsigned int  // Used only where necessary, to avoid long lines
-                           // Undefined before the end of this header
+// Used only where necessary, to avoid long lines; Undefined later in this header
+#define uint unsigned int
 
-/* The default element format specifier */
+/** The default element format specifier */
 #define MAT47_ELEM_FMT "%.4g"
 
-/* Like `mat47_fprintf()` but with *format* set to `MAT47_ELEM_FMT` */
+/** Like `mat47_fprintf()` but with *format* set to `MAT47_ELEM_FMT` */
 #define mat47_fprint(m, stream) mat47_fprintf(m, stream, MAT47_ELEM_FMT)
 
-/* Like `mat47_fprintf()` but with *stream* set to `stdout` */
+/** Like `mat47_fprintf()` but with *stream* set to `stdout` */
 #define mat47_printf(m, format) mat47_fprintf(m, stdout, format)
 
-/* Like `mat47_printf()` but with *format* set to `MAT47_ELEM_FMT` */
+/** Like `mat47_printf()` but with *format* set to `MAT47_ELEM_FMT` */
 #define mat47_print(m) mat47_printf(m, MAT47_ELEM_FMT)
 
-/* Enables/Disables library-wide debugging (disabled by default). */
+/** Enables/Disables library-wide debugging (disabled by default). */
 extern _Bool MAT47_DEBUG;
 
-/* Stream to which libray logs should be written.
+/**
+ * Stream to which library logs should be written.
  * If null (default), logs are written to `stderr`.
  *
  * Note:
@@ -36,29 +37,26 @@ extern _Bool MAT47_DEBUG;
  */
 extern FILE *MAT47_LOG_FILE;
 
-/* The matrix type */
+/** The matrix type */
 typedef struct {
     unsigned int n_rows;
     unsigned int n_cols;
     double **data;
 } mat47_t;
 
-/* Deallocates memory used by a matrix.
+/**
+ * Deallocates memory used by a matrix.
  *
  * Args:
  *     m: The matrix to be deallocated
- *
- * Returns:
- *     - A null pointer, if either argument equals zero or a failure occurs during
- *       memory allocation.
- *     - Otherwise, a pointer to a newly allocated matrix.
  *
  * Note:
  *     This must be called to deallocate memory internally used by a matrix.
  */
 void *mat47_del(mat47_t *m);
 
-/* Writes a string representation of a matrix to a stream.
+/**
+ * Writes a string representation of a matrix to a stream.
  *
  * Args:
  *     m: The matrix whose representation should be written
@@ -81,12 +79,14 @@ void *mat47_del(mat47_t *m);
  */
 intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict format);
 
-/* Creates a new matrix and initializes it from a given array.
+/**
+ * Creates a new matrix and initializes it from the given array.
  *
  * Args:
  *     n_rows (unsigned int): Number of rows in the array
  *     n_cols (unsigned int): Number of columns in the array
- *     array (*restrict *restrict): 2D array from which the matrix should be initialized
+ *     array (T *restrict *restrict): 2D array from which the matrix should be
+ *       initialized (See the description of _T_ below)
  *
  * Returns:
  *     - A null pointer, if:
@@ -96,7 +96,8 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
  *     - Otherwise, a pointer to a new initialized matrix.
  *
  * This is a generic interface which accepts an array of (or pointer to) pointers to
- * any of the following types (or any type compatible with any of these):
+ * various arithmetic types. Hence, _T_ can be any of the following types (or any type
+ * compatible with any of these):
  *
  * - Signed integer: `int8_t`, `int16_t`, `int32_t`, `int64_t`
  * - Unsigned integer: `uint8_t`, `uint16_t`, `uint32_t`, `uint64_t`
@@ -116,7 +117,7 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
         float **: mat47_init_float, double **: mat47_init_double \
     )(n_rows, n_cols, array)
 
-/* See `mat47_init` */
+// See `mat47_init`
 #define restrict_p_p *restrict *restrict
 mat47_t *mat47_init_int8(uint n_rows, uint n_cols, int8_t restrict_p_p array);
 mat47_t *mat47_init_int16(uint n_rows, uint n_cols, int16_t restrict_p_p array);
@@ -130,16 +131,17 @@ mat47_t *mat47_init_float(uint n_rows, uint n_cols, float restrict_p_p array);
 mat47_t *mat47_init_double(uint n_rows, uint n_cols, double restrict_p_p array);
 #undef restrict_p_p
 
-/* Creates a new zero matrix.
+/**
+ * Creates a new zero matrix.
  *
  * Args:
- *     n_rows: Number of rows; 1 <= n_rows <= UINT_MAX
- *     n_cols: Number of columns; 1 <= n_cols <= UINT_MAX
+ *     n_rows: Number of rows
+ *     n_cols: Number of columns
  *
  * Returns:
- *     - A null pointer, if either argument equals zero or a failure occurs during
+ *     - A null pointer, if either dimension equals zero or a failure occurs during
  *       memory allocation.
- *     - Otherwise, a pointer to a newly allocated matrix.
+ *     - Otherwise, a pointer to a new zero matrix.
  */
 mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols);
 
