@@ -233,6 +233,11 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
         mat47_log("Null pointer(s): m=%p, stream=%p, format=%p", m, stream, format);
         return -1;
     }
+    if (!*format) {
+        mat47_errno = MAT47_ERR_ZERO_SIZE;
+        mat47_log("Empty element format string");
+        return -1;
+    }
 
     double *restrict row, **restrict data = m->data;
     unsigned int i, j, n_rows = m->n_rows, n_cols = m->n_cols;
