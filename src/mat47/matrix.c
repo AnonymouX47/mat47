@@ -4,6 +4,7 @@
  * See https://github.com/AnonymouX47/mat47/LICENCE for license information.
  */
 
+#include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -220,6 +221,36 @@ void *mat47_del(mat47_t *m)
         free(m);
         mat47_log("Deallocated matrix @ %p", m);
     }
+}
+
+
+double mat47_get_elem(mat47_t *m, unsigned int row, unsigned int col)
+{
+    if (!row || !col || row > m->n_rows || col > m->n_cols) {
+        mat47_errno = MAT47_ERR_INDEX_OUT_OF_RANGE;
+        mat47_log(
+            "Index out of range: row=%u, n_rows=%u col=%u, n_cols=%u",
+            row, m->n_rows, col, m->n_cols
+        );
+        return NAN;
+    }
+
+    return m->data[row - 1][col - 1];
+}
+
+
+void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value)
+{
+    if (!row || !col || row > m->n_rows || col > m->n_cols) {
+        mat47_errno = MAT47_ERR_INDEX_OUT_OF_RANGE;
+        mat47_log(
+            "Index out of range: row=%u, n_rows=%u col=%u, n_cols=%u",
+            row, m->n_rows, col, m->n_cols
+        );
+        return;
+    }
+
+    m->data[row - 1][col - 1] = value;
 }
 
 

@@ -93,6 +93,37 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
 #define mat47_fprint(m, stream) mat47_fprintf(m, stream, MAT47_ELEM_FMT)
 
 /**
+ * Retrieves a matrix element.
+ *
+ * Args:
+ *     m: The matrix from which to retrieve an element
+ *     row: The **1-based** index of the element's row
+ *     col: The **1-based** index of the element's column
+ *
+ * Returns:
+ *     - ``NAN``, if either index is out of range.
+ *     - Otherwise, the element at ``m[row, col]``.
+ *
+ * Raises:
+ *     MAT47_ERR_INDEX_OUT_OF_RANGE: Either index is out of range.
+ */
+double mat47_get_elem(mat47_t *m, unsigned int row, unsigned int col);
+
+/**
+ * Modifies a matrix element.
+ *
+ * Args:
+ *     m: The matrix from which to retrieve an element
+ *     row: The **1-based** index of the element's row
+ *     col: The **1-based** index of the element's column
+ *     value: The new value of the element
+ *
+ * Raises:
+ *     MAT47_ERR_INDEX_OUT_OF_RANGE: Either index is out of range.
+ */
+void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value);
+
+/**
  * Creates a new matrix and initializes it from the given array.
  *
  * Args:
