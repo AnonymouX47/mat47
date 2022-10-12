@@ -46,4 +46,22 @@ enum mat47_errors {
     MAT47_ERR_INDEX_OUT_OF_RANGE
 };
 
+/**
+ * Returns the textual description of a library-specific error code.
+ *
+ * Args:
+ *     errnum: Error code
+ *
+ * Returns:
+ *     - A character string describing the error code, if it's one of those defined
+ *       in :c:enum:`mat47_errors`.
+ *     - A null pointer, if the error code is unrecognized.
+ *
+ * Note:
+ *     Any string returned by this function has **static** storage duration and
+ *     should be considered read-only. Any attempt to modify the string invokes
+ *     undefined behaviour.
+ */
+char *mat47_strerror(int errnum);
+
 #endif  // MAT47_ERROR_H

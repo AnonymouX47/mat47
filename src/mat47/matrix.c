@@ -367,3 +367,17 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
 
     return n_bytes;
 }
+
+
+char *mat47_strerror(int errnum)
+{
+    static char *error_str[] = {
+        [1] = "Unable to allocate memory",
+        "Invalid zero-sized/empty result",
+        "Null pointer argument(s)",
+        "Index out of range",
+    };
+
+    if (errnum >= sizeof(error_str) / sizeof(*error_str)) errnum = 0;
+    return error_str[errnum];
+}
