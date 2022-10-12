@@ -16,15 +16,24 @@
 /** The default element format specifier */
 #define MAT47_ELEM_FMT "%.4g"
 
-/** Enables/Disables library-wide debugging (disabled by default). */
-extern _Bool MAT47_DEBUG;
+/** Enables/Disables library-wide debug logs (disabled by default). */
+extern _Bool MAT47_LOG_DEBUG;
+
+/** Enables/Disables library-wide error logs (disabled by default). */
+extern _Bool MAT47_LOG_ERROR;
 
 /**
  * Stream to which library logs should be written.
+ *
  * If null (default), logs are written to `stderr`.
  *
  * Note:
- *     Only used when debugging is enabled via `MAT47_DEBUG`.
+ *     Only used when either or both debug and/or error logs are enabled via
+ *     :c:var:`MAT47_LOG_DEBUG` and/or :c:var:`MAT47_LOG_ERROR`.
+ *
+ * Attention:
+ *     Logging may or may not be thread-safe, depending on the file I/O implementation
+ *     being used.
  */
 extern FILE *MAT47_LOG_FILE;
 

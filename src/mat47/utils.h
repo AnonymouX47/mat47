@@ -9,13 +9,28 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <time.h>
 
-#define mat47_log(msg, ...) (MAT47_DEBUG && \
-    fprintf( \
-        (MAT47_LOG_FILE ? MAT47_LOG_FILE : stderr), \
-        "[DEBUG] " __FILE__ ":%d: %s: " msg "\n", \
-        __LINE__, __func__, ##__VA_ARGS__ \
-    )\
+#include "error.h"
+
+#define log_(level, msg, ...) fprintf( \
+    (MAT47_LOG_FILE ? MAT47_LOG_FILE : stderr), \
+    "(%s.%ld) " __FILE__ ":%d: %s: [" level "] " msg "\n", \
+    ( \
+        strftime( \
+            time_str, 9, "%T", \
+            localtime_r(&(time_t){time(NULL)}, &(struct tm){0}) \
+        ), \
+        time_str \
+    ), \
+    (timespec_get(&log_timespec, TIME_UTC), log_timespec.tv_nsec), \
+    __LINE__, __func__, ##__VA_ARGS__ \
+)
+
+#define debug(msg, ...) (MAT47_LOG_DEBUG && log_("DEBUG", msg, ##__VA_ARGS__)) \
+
+#define error(extra_msg, ...) (MAT47_LOG_ERROR && \
+    log_("ERROR", "%s" extra_msg, mat47_strerror(mat47_errno), ##__VA_ARGS__) \
 )
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
@@ -29,8 +44,11 @@
         uint8_t *: usum8, uint16_t *: usum16, uint32_t *: usum32, uint64_t *: usum64 \
     )(n, arr)
 
-extern _Bool MAT47_DEBUG;
+extern _Bool MAT47_LOG_DEBUG;
+extern _Bool MAT47_LOG_ERROR;
 extern FILE *MAT47_LOG_FILE;
+static _Thread_local struct timespec log_timespec;
+static _Thread_local char time_str[9];
 
 #define _sum(n, arr) \
     intmax_t sum = 0; \

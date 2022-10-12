@@ -17,7 +17,9 @@
 
 #define uint unsigned int  // Used only where necessary, to avoid long lines
 
-
+_Bool MAT47_LOG_DEBUG;
+_Bool MAT47_LOG_ERROR;
+FILE *MAT47_LOG_FILE;
 _Thread_local int mat47_errno;
 
 
@@ -48,18 +50,18 @@ static mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols, bool zero)
 
     if (!(n_rows && n_cols)) {
         mat47_errno = MAT47_ERR_ZERO_SIZE;
-        mat47_log("Zero size: %u x %u", n_rows, n_cols);
+        error(": %u x %u", n_rows, n_cols);
         return NULL;
     }
 
     mat47_t *m;
     if (!(m = malloc(sizeof(mat47_t)))) {
         mat47_errno = MAT47_ERR_ALLOC;
-        mat47_log("Failed to allocate matrix");
+        error(" for matrix object");
         return NULL;
     }
 
-    mat47_log("Allocated matrix @ %p", m);
+    debug("Allocated matrix @ %p", m);
 
     m->n_rows = n_rows;
     m->n_cols = n_cols;
@@ -67,11 +69,11 @@ static mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols, bool zero)
     if (!(m->data = calloc(sizeof(double *), n_rows))) {
         free(m);
         mat47_errno = MAT47_ERR_ALLOC;
-        mat47_log("Failed to allocate row pointers");
+        error(" for row pointers");
         return NULL;
     }
 
-    mat47_log("Allocated row pointers");
+    debug("Allocated row pointers");
 
     data = m->data;
     for (unsigned int i = 0; i < n_rows; i++)
@@ -80,12 +82,12 @@ static mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols, bool zero)
         ))) {
             mat47_del(m);
             mat47_errno = MAT47_ERR_ALLOC;
-            mat47_log("Failed to allocate rows");
+            error(" for rows");
             return NULL;
         }
 
-    mat47_log("Allocated rows, zero=%u", zero);
-    mat47_log(
+    debug("Allocated rows, zero=%u", zero);
+    debug(
         "[1, 1] = %f, [%d, %d] = %f",
         data[0][0], n_rows, n_cols, data[n_rows - 1][n_cols - 1]
     );
@@ -108,7 +110,7 @@ mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols)
 \
     if (!array) { \
         mat47_errno = MAT47_ERR_NULL_PTR; \
-        mat47_log("`array` is null"); \
+        error(": `array`"); \
         return NULL; \
     } \
     if (!(m = mat47_new(n_rows, n_cols, false))) return NULL; \
@@ -118,7 +120,7 @@ mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols)
         if (!(row = array[n_rows])) { \
             mat47_del(m); \
             mat47_errno = MAT47_ERR_NULL_PTR; \
-            mat47_log("`array[%u]` is null", n_rows); \
+            error(": `array[%u]`", n_rows); \
             return NULL; \
         } \
         data_row = data[n_rows]; \
@@ -180,7 +182,7 @@ mat47_t *mat47_init_double(uint n_rows, uint n_cols, double restrict_p_p array)
 
     if (!array) {
         mat47_errno = MAT47_ERR_NULL_PTR;
-        mat47_log("`array` is null");
+        error(": `array`");
         return NULL;
     }
     if (!(m = mat47_new(n_rows, n_cols, false))) return NULL;
@@ -190,7 +192,7 @@ mat47_t *mat47_init_double(uint n_rows, uint n_cols, double restrict_p_p array)
         if (!(row = array[n_rows])) {
             mat47_del(m);
             mat47_errno = MAT47_ERR_NULL_PTR;
-            mat47_log("`array[%u]` is null", n_rows);
+            error(": `array[%u]`", n_rows);
             return NULL;
         }
         memcpy(data[n_rows], row, sizeof(double) * n_cols);
@@ -219,7 +221,7 @@ void *mat47_del(mat47_t *m)
             free(m->data);
         }
         free(m);
-        mat47_log("Deallocated matrix @ %p", m);
+        debug("Deallocated matrix @ %p", m);
     }
 }
 
@@ -228,10 +230,7 @@ double mat47_get_elem(mat47_t *m, unsigned int row, unsigned int col)
 {
     if (!row || !col || row > m->n_rows || col > m->n_cols) {
         mat47_errno = MAT47_ERR_INDEX_OUT_OF_RANGE;
-        mat47_log(
-            "Index out of range: row=%u, n_rows=%u col=%u, n_cols=%u",
-            row, m->n_rows, col, m->n_cols
-        );
+        error(": row=%u, n_rows=%u col=%u, n_cols=%u", row, m->n_rows, col, m->n_cols);
         return NAN;
     }
 
@@ -243,10 +242,7 @@ void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value
 {
     if (!row || !col || row > m->n_rows || col > m->n_cols) {
         mat47_errno = MAT47_ERR_INDEX_OUT_OF_RANGE;
-        mat47_log(
-            "Index out of range: row=%u, n_rows=%u col=%u, n_cols=%u",
-            row, m->n_rows, col, m->n_cols
-        );
+        error(": row=%u, n_rows=%u col=%u, n_cols=%u", row, m->n_rows, col, m->n_cols);
         return;
     }
 
@@ -261,12 +257,12 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
 {
     if (!(m && stream && format)) {
         mat47_errno = MAT47_ERR_NULL_PTR;
-        mat47_log("Null pointer(s): m=%p, stream=%p, format=%p", m, stream, format);
+        error(": m=%p, stream=%p, format=%p", m, stream, format);
         return -1;
     }
     if (!*format) {
         mat47_errno = MAT47_ERR_ZERO_SIZE;
-        mat47_log("Empty element format string");
+        error(": empty element format string");
         return -1;
     }
 
@@ -274,7 +270,7 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
     unsigned int i, j, n_rows = m->n_rows, n_cols = m->n_cols;
     intmax_t n_bytes = 0;
 
-    mat47_log("Printing matrix @ %p; n_rows=%u, n_cols=%u", m, n_rows, n_cols);
+    debug("Printing matrix @ %p; n_rows=%u, n_cols=%u", m, n_rows, n_cols);
 
     char *mat_str[n_rows],
          (*row_str)[ELEM_MAX_LEN + 1],
@@ -289,12 +285,12 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
         if (!(mat_str[i] = malloc((ELEM_MAX_LEN + 1) * sizeof(char) * n_cols))) {
             while (++i < n_rows) free(mat_str[i]);  // Deallocate allocated rows
             mat47_errno = MAT47_ERR_ALLOC;
-            mat47_log("Unable to allocate memory for element strings");
+            error(" for element strings");
             return -1;
         }
     }
 
-    mat47_log("Allocated memory to print matrix");
+    debug("Allocated memory to print matrix");
 
     memset(col_widths, 0, n_cols * sizeof(*col_widths));
     for (i = 0; i < n_rows; i++) {
@@ -310,7 +306,7 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
             );
     }
 
-    mat47_log(
+    debug(
         "Formatted elements: "
         "[1, 1] = \"%s\" (%f), [1, 2] = \"%s\" (%f), [%d, %d] = \"%s\" (%f)",
         mat_str[0], data[0][0],
@@ -323,9 +319,8 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
     for (j = 0; j < n_cols; j++)
         sprintf(col_fmt[j], "| %%%ds ", col_widths[j]);
 
-    mat47_log("Created column format strings");
-    mat47_log(
-        "[1] = %s, [%d] = %s",
+    debug(
+        "Created column format strings: [1] = %s, [%d] = %s",
         col_fmt[0], n_cols, col_fmt[n_cols - 1]
     );
 
@@ -350,7 +345,7 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
     }
     strcpy(line - 1, "|\n\0");  // Overwrites the last '+' (line - 1)
 
-    mat47_log("Writing to file");
+    debug("Writing to file");
 
     n_bytes += fprintf(stream, bar);
     for (i = 0; i < n_rows; i++) {
@@ -363,7 +358,7 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
     n_bytes += fprintf(stream, bar);
 
     for (i = n_rows; i--;) free(mat_str[i]);
-    mat47_log("Deallocated memory for element strings");
+    debug("Deallocated memory for element strings");
 
     return n_bytes;
 }
