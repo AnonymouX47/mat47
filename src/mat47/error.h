@@ -4,6 +4,9 @@
  * See https://github.com/AnonymouX47/mat47/LICENCE for license information.
  */
 
+#ifndef MAT47_ERROR_H
+#define MAT47_ERROR_H
+
 /**
  * Thread-local variable used to signify errors that occur within library functions.
  *
@@ -42,3 +45,5 @@ enum mat47_errors {
     /** Raised for out-of-range index arguments */
     MAT47_ERR_INDEX_OUT_OF_RANGE
 };
+
+#endif  // MAT47_ERROR_H

@@ -4,11 +4,11 @@
  * See https://github.com/AnonymouX47/mat47/LICENCE for license information.
  */
 
+#ifndef MAT47_MATRIX_H
+#define MAT47_MATRIX_H
+
 #include <stdint.h>
 #include <stdio.h>
-
-#ifndef MAT47_H
-#define MAT47_H
 
 // Used only where necessary, to avoid long lines; Undefined later in this header
 #define uint unsigned int
@@ -206,4 +206,4 @@ mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols);
 
 #undef uint
 
-#endif  // MAT47_H
+#endif  // MAT47_MATRIX_H

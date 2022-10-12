@@ -4,11 +4,11 @@
  * See https://github.com/AnonymouX47/mat47/LICENCE for license information.
  */
 
-#include <stdint.h>
-#include <stdio.h>
-
 #ifndef MAT47_UTILS_H
 #define MAT47_UTILS_H
+
+#include <stdint.h>
+#include <stdio.h>
 
 #define mat47_log(msg, ...) (MAT47_DEBUG && \
     fprintf( \
