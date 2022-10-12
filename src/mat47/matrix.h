@@ -73,6 +73,11 @@ void *mat47_del(mat47_t *m);
  *       - a failure occurs during memory allocation.
  *     - Otherwise, the amount of characters written to the stream.
  *
+ * Raises:
+ *     MAT47_ERR_NULL_PTR: At least one of the arguments is null.
+ *     MAT47_ERR_ZERO_SIZE: The element format string (*format*) is empty.
+ *     MAT47_ERR_ALLOC: Unable to allocate memory.
+ *
  * Note:
  *     - The string representation of each element has a length limit of 24 characters.
  *       Beyond that, an element's string representation is simply truncated.
@@ -102,6 +107,11 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
  *       - *array* (or any of the pointers it points to) is null, or
  *       - a failure occurs during memory allocation.
  *     - Otherwise, a pointer to a new initialized matrix.
+ *
+ * Raises:
+ *     MAT47_ERR_NULL_PTR: *array*, or any of the pointers it points to, is null.
+ *     MAT47_ERR_ZERO_SIZE: Either dimension equals zero.
+ *     MAT47_ERR_ALLOC: Unable to allocate memory.
  *
  * This is a generic interface which accepts an array of (or pointer to) pointers to
  * various arithmetic types. Hence, _T_ can be any of the following types (or any type
@@ -156,6 +166,10 @@ mat47_t *mat47_init_double(uint n_rows, uint n_cols, double restrict_p_p array);
  *     - A null pointer, if either dimension equals zero or a failure occurs during
  *       memory allocation.
  *     - Otherwise, a pointer to a new zero matrix.
+ *
+ * Raises:
+ *     MAT47_ERR_ZERO_SIZE: Either dimension equals zero.
+ *     MAT47_ERR_ALLOC: Unable to allocate memory.
  */
 mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols);
 

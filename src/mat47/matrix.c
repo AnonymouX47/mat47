@@ -10,10 +10,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "error.h"
 #include "matrix.h"
 #include "utils.h"
 
 #define uint unsigned int  // Used only where necessary, to avoid long lines
+
+
+_Thread_local int mat47_errno;
 
 
 /**
@@ -30,6 +34,10 @@
  *       memory allocation.
  *     - Otherwise, a pointer to a newly allocated matrix.
  *
+ * Raises:
+ *     MAT47_ERR_ZERO_SIZE: Either dimension equals zero.
+ *     MAT47_ERR_ALLOC: Unable to allocate memory.
+ *
  * Note:
  *     Allocation of zeroed memory takes longer (tested).
  */
@@ -38,12 +46,14 @@ static mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols, bool zero)
     double **data;
 
     if (!(n_rows && n_cols)) {
+        mat47_errno = MAT47_ERR_ZERO_SIZE;
         mat47_log("Zero size: %u x %u", n_rows, n_cols);
         return NULL;
     }
 
     mat47_t *m;
     if (!(m = malloc(sizeof(mat47_t)))) {
+        mat47_errno = MAT47_ERR_ALLOC;
         mat47_log("Failed to allocate matrix");
         return NULL;
     }
@@ -55,6 +65,7 @@ static mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols, bool zero)
     // Using `calloc()` to ensure all pointer are NULL, in case row allocation fails
     if (!(m->data = calloc(sizeof(double *), n_rows))) {
         free(m);
+        mat47_errno = MAT47_ERR_ALLOC;
         mat47_log("Failed to allocate row pointers");
         return NULL;
     }
@@ -67,6 +78,7 @@ static mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols, bool zero)
             zero ? calloc(sizeof(double), n_cols) : malloc(sizeof(double) * n_cols)
         ))) {
             mat47_del(m);
+            mat47_errno = MAT47_ERR_ALLOC;
             mat47_log("Failed to allocate rows");
             return NULL;
         }
@@ -94,6 +106,7 @@ mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols)
     restrict typeof(*array) row; \
 \
     if (!array) { \
+        mat47_errno = MAT47_ERR_NULL_PTR; \
         mat47_log("`array` is null"); \
         return NULL; \
     } \
@@ -102,8 +115,9 @@ mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols)
     data = m->data; \
     while (n_rows--) { \
         if (!(row = array[n_rows])) { \
-            mat47_log("`array[%u]` is null", n_rows); \
             mat47_del(m); \
+            mat47_errno = MAT47_ERR_NULL_PTR; \
+            mat47_log("`array[%u]` is null", n_rows); \
             return NULL; \
         } \
         data_row = data[n_rows]; \
@@ -164,6 +178,7 @@ mat47_t *mat47_init_double(uint n_rows, uint n_cols, double restrict_p_p array)
     double **data, *restrict row;
 
     if (!array) {
+        mat47_errno = MAT47_ERR_NULL_PTR;
         mat47_log("`array` is null");
         return NULL;
     }
@@ -172,8 +187,9 @@ mat47_t *mat47_init_double(uint n_rows, uint n_cols, double restrict_p_p array)
     data = m->data;
     while (n_rows--) {
         if (!(row = array[n_rows])) {
-            mat47_log("`array[%u]` is null", n_rows);
             mat47_del(m);
+            mat47_errno = MAT47_ERR_NULL_PTR;
+            mat47_log("`array[%u]` is null", n_rows);
             return NULL;
         }
         memcpy(data[n_rows], row, sizeof(double) * n_cols);
@@ -213,6 +229,7 @@ void *mat47_del(mat47_t *m)
 intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict format)
 {
     if (!(m && stream && format)) {
+        mat47_errno = MAT47_ERR_NULL_PTR;
         mat47_log("Null pointer(s): m=%p, stream=%p, format=%p", m, stream, format);
         return -1;
     }
@@ -235,6 +252,7 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
     for (i = n_rows; i--;) {
         if (!(mat_str[i] = malloc((ELEM_MAX_LEN + 1) * sizeof(char) * n_cols))) {
             while (++i < n_rows) free(mat_str[i]);  // Deallocate allocated rows
+            mat47_errno = MAT47_ERR_ALLOC;
             mat47_log("Unable to allocate memory for element strings");
             return -1;
         }
