@@ -66,7 +66,7 @@ static mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols, bool zero)
     m->n_rows = n_rows;
     m->n_cols = n_cols;
     // Using `calloc()` to ensure all pointer are NULL, in case row allocation fails
-    if (!(m->data = calloc(sizeof(double *), n_rows))) {
+    if (!(m->data = data = calloc(sizeof(double *), n_rows))) {
         free(m);
         mat47_errno = MAT47_ERR_ALLOC;
         error(" for row pointers");
@@ -75,7 +75,6 @@ static mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols, bool zero)
 
     debug("Allocated row pointers");
 
-    data = m->data;
     for (unsigned int i = 0; i < n_rows; i++)
         if (!(data[i] = (
             zero ? calloc(sizeof(double), n_cols) : malloc(sizeof(double) * n_cols)
@@ -204,7 +203,7 @@ mat47_t *mat47_init_double(uint n_rows, uint n_cols, double restrict_p_p array)
 #undef restrict_p_p
 
 
-mat47_t *mat47_copy(mat47_t *m)
+mat47_t *mat47_copy(const mat47_t *m)
 {
     return mat47_init_double(m->n_rows, m->n_cols, m->data);
 }
@@ -226,7 +225,7 @@ void *mat47_del(mat47_t *m)
 }
 
 
-double mat47_get_elem(mat47_t *m, unsigned int row, unsigned int col)
+double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col)
 {
     if (!row || !col || row > m->n_rows || col > m->n_cols) {
         mat47_errno = MAT47_ERR_INDEX_OUT_OF_RANGE;
@@ -253,8 +252,9 @@ void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value
 #define ELEM_MAX_LEN 24
 #define ELEM_MAX_LEN_NDIGITS 2
 
-intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict format)
-{
+intmax_t mat47_fprintf(
+    const mat47_t *m, FILE *restrict stream, const char *restrict format
+) {
     if (!(m && stream && format)) {
         mat47_errno = MAT47_ERR_NULL_PTR;
         error(": m=%p, stream=%p, format=%p", m, stream, format);
@@ -266,7 +266,7 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
         return -1;
     }
 
-    double *restrict row, **restrict data = m->data;
+    double *restrict row, *restrict *restrict data = m->data;
     unsigned int i, j, n_rows = m->n_rows, n_cols = m->n_cols;
     intmax_t n_bytes = 0;
 

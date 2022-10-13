@@ -54,7 +54,7 @@ typedef struct {
  *     - A null pointer, if a failure occurs during memory allocation.
  *     - Otherwise, a pointer to a **deep** copy of *m*.
  */
-mat47_t *mat47_copy(mat47_t *m);
+mat47_t *mat47_copy(const mat47_t *m);
 
 /**
  * Deallocates memory used by a matrix.
@@ -96,7 +96,9 @@ void *mat47_del(mat47_t *m);
  *       undefined.
  *     - *stream* is not explicitly flushed.
  */
-intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict format);
+intmax_t mat47_fprintf(
+    const mat47_t *m, FILE *restrict stream, const char *restrict format
+);
 
 /** Like `mat47_fprintf()` but with *format* set to `MAT47_ELEM_FMT` */
 #define mat47_fprint(m, stream) mat47_fprintf(m, stream, MAT47_ELEM_FMT)
@@ -116,7 +118,7 @@ intmax_t mat47_fprintf(mat47_t *m, FILE *restrict stream, const char *restrict f
  * Raises:
  *     MAT47_ERR_INDEX_OUT_OF_RANGE: Either index is out of range.
  */
-double mat47_get_elem(mat47_t *m, unsigned int row, unsigned int col);
+double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col);
 
 /**
  * Modifies a matrix element.
