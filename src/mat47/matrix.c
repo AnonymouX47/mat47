@@ -61,7 +61,7 @@ static mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols, bool zero)
         return NULL;
     }
 
-    debug("Allocated matrix @ %p", m);
+    debug("Allocated matrix @ %p", (void *)m);
 
     m->n_rows = n_rows;
     m->n_cols = n_cols;
@@ -209,7 +209,7 @@ mat47_t *mat47_copy(const mat47_t *m)
 }
 
 
-void *mat47_del(mat47_t *m)
+void mat47_del(mat47_t *m)
 {
     if (m) {
         if (m->data) {
@@ -219,8 +219,8 @@ void *mat47_del(mat47_t *m)
             for (unsigned int i = 0; i < n_rows; i++) free(data[i]);
             free(m->data);
         }
+        debug("Deallocated matrix @ %p", (void *)m);
         free(m);
-        debug("Deallocated matrix @ %p", m);
     }
 }
 
@@ -257,7 +257,9 @@ intmax_t mat47_fprintf(
 ) {
     if (!(m && stream && format)) {
         mat47_errno = MAT47_ERR_NULL_PTR;
-        error(": m=%p, stream=%p, format=%p", m, stream, format);
+        error(
+            ": m=%p, stream=%p, format=%p", (void *)m, (void *)stream, (void *)format
+        );
         return -1;
     }
     if (!*format) {
@@ -270,7 +272,7 @@ intmax_t mat47_fprintf(
     unsigned int i, j, n_rows = m->n_rows, n_cols = m->n_cols;
     intmax_t n_bytes = 0;
 
-    debug("Printing matrix @ %p; n_rows=%u, n_cols=%u", m, n_rows, n_cols);
+    debug("Printing matrix @ %p; n_rows=%u, n_cols=%u", (void *)m, n_rows, n_cols);
 
     char *mat_str[n_rows],
          (*row_str)[ELEM_MAX_LEN + 1],
@@ -347,15 +349,15 @@ intmax_t mat47_fprintf(
 
     debug("Writing to file");
 
-    n_bytes += fprintf(stream, bar);
+    n_bytes += fputs(bar, stream);
     for (i = 0; i < n_rows; i++) {
         row_str = (char (*)[ELEM_MAX_LEN + 1])mat_str[i];
         for (j = 0; j < n_cols; j++)
             n_bytes += fprintf(stream, col_fmt[j], row_str[j]);
         n_bytes += fprintf(stream, "|\n");
-        if (i < n_rows - 1) n_bytes += fprintf(stream, mid_bar);
+        if (i < n_rows - 1) n_bytes += fputs(mid_bar, stream);
     }
-    n_bytes += fprintf(stream, bar);
+    n_bytes += fputs(bar, stream);
 
     for (i = n_rows; i--;) free(mat_str[i]);
     debug("Deallocated memory for element strings");

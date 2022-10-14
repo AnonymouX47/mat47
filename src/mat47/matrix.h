@@ -65,7 +65,7 @@ mat47_t *mat47_copy(const mat47_t *m);
  * Note:
  *     This must be called to deallocate memory internally used by a matrix.
  */
-void *mat47_del(mat47_t *m);
+void mat47_del(mat47_t *m);
 
 /**
  * Writes a string representation of a matrix to a stream.

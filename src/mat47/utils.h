@@ -27,10 +27,11 @@
     __LINE__, __func__, ##__VA_ARGS__ \
 )
 
-#define debug(msg, ...) (MAT47_LOG_DEBUG && log_("DEBUG", msg, ##__VA_ARGS__)) \
+#define debug(msg, ...) (MAT47_LOG_DEBUG ? log_("DEBUG", msg, ##__VA_ARGS__) : 0) \
 
-#define error(extra_msg, ...) (MAT47_LOG_ERROR && \
-    log_("ERROR", "%s" extra_msg, mat47_strerror(mat47_errno), ##__VA_ARGS__) \
+#define error(extra_msg, ...) (MAT47_LOG_ERROR \
+    ? log_("ERROR", "%s" extra_msg, mat47_strerror(mat47_errno), ##__VA_ARGS__) \
+    : 0 \
 )
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
