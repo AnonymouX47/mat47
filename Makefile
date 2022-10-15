@@ -30,7 +30,7 @@ $(BUILD)/%.o: $(SRC)/%.c $(headers)
 # Automated tests (tracked)
 
 test: $(BUILD)/ bin/ bin/test
-	bin/test --verbose
+	bin/test --verbose -j1 -S $(TEST_FLAGS)
 
 bin/test: $(test_objects)
 	$(CC) $^ -o $@ $(TEST_LDFLAGS)
