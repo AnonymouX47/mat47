@@ -6,15 +6,24 @@ Test(new, zero_size)
 {
     mat47_errno = 0;
     cr_assert_null(mat47_new(0, 1, false), "Zero `n_rows` is invalid");
-    cr_assert_eq(mat47_errno, MAT47_ERR_ZERO_SIZE);
+    cr_assert_eq(
+        mat47_errno, MAT47_ERR_ZERO_SIZE,
+        "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
+    );
 
     mat47_errno = 0;
     cr_assert_null(mat47_new(1, 0, false), "Zero `n_cols` is invalid");
-    cr_assert_eq(mat47_errno, MAT47_ERR_ZERO_SIZE);
+    cr_assert_eq(
+        mat47_errno, MAT47_ERR_ZERO_SIZE,
+        "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
+    );
 
     mat47_errno = 0;
     cr_assert_null(mat47_new(1, 0, false), "Zero `n_cols` and `n_rows` is invalid");
-    cr_assert_eq(mat47_errno, MAT47_ERR_ZERO_SIZE);
+    cr_assert_eq(
+        mat47_errno, MAT47_ERR_ZERO_SIZE,
+        "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
+    );
 }
 
 Test(new, uninitialized)
@@ -135,3 +144,44 @@ TestInit(float)
 TestInit(double)
 
 #undef TestInit
+
+Test(copy, null_matrix_ptr)
+{
+    mat47_errno = 0;
+    cr_assert_null(mat47_copy(NULL), "Null `m` is invalid");
+    cr_assert_eq(
+        mat47_errno, MAT47_ERR_NULL_PTR,
+        "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
+    );
+}
+
+Test(copy, copy)
+{
+    unsigned int i, j;
+    mat47_t *m1, *m2;
+    int a[3][2] = {{-128, -1}, {0, 1}, {2, 127}};
+
+    mat47_errno = 0;
+    m1 = mat47_init(sizeof_arr(a), sizeof_arr(a[0]), ((int *[3]){a[0], a[1], a[2]}));
+
+    cr_assert_eq(
+        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno)
+    );
+
+    m2 = mat47_copy(m1);
+
+    cr_assert_eq(
+        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno)
+    );
+    cr_assert_not_null(m2, "`m2` is null");
+
+    for (i = 0; i < sizeof_arr(a); i++)
+        for (j = 0; j < sizeof_arr(a[0]); j++)
+            cr_assert_eq(
+                (double)m2->data[i][j], m1->data[i][j],
+                "`m2 = %f`, `m1 = %f`: i=%u, j=%u",
+                m2->data[i][j], m1->data[i][j], i, j
+            );
+
+    mat47_del(m1); mat47_del(m2);
+}
