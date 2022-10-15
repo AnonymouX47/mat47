@@ -27,8 +27,12 @@ Test(new, uninitialized)
             mat47_errno = 0;
             m = mat47_new(r, c, false);
 
+            cr_assert_eq(
+                mat47_errno, 0,
+                "Error creating matrix (%s): r=%u, c=%u",
+                mat47_strerror(mat47_errno), r, c
+            );
             cr_assert_not_null(m, "`m` is null: r=%u, c=%u", r, c);
-            cr_assert_eq(mat47_errno, 0, "Error at matrix alloc: r=%u, c=%u", r, c);
 
             cr_assert_eq(m->n_rows, r, "n_rows=%u, r=%u, c=%u", m->n_rows, r, c);
             cr_assert_eq(m->n_cols, c, "n_cols=%u, r=%u, c=%u", m->n_cols, r, c);
@@ -53,8 +57,12 @@ Test(new, zeroed)
             mat47_errno = 0;
             m = mat47_new(r, c, true);
 
+            cr_assert_eq(
+                mat47_errno, 0,
+                "Error creating matrix (%s): r=%u, c=%u",
+                mat47_strerror(mat47_errno), r, c
+            );
             cr_assert_not_null(m, "`m` is null: r=%u, c=%u", r, c);
-            cr_assert_eq(mat47_errno, 0, "Error at matrix alloc: r=%u, c=%u", r, c);
 
             cr_assert_eq(m->n_rows, r, "n_rows=%u, r=%u, c=%u", m->n_rows, r, c);
             cr_assert_eq(m->n_cols, c, "n_cols=%u, r=%u, c=%u", m->n_cols, r, c);
