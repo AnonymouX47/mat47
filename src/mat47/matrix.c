@@ -375,6 +375,6 @@ char *mat47_strerror(unsigned int errnum)
         "Index out of range",
     };
 
-    if (errnum >= sizeof(error_str) / sizeof(*error_str)) errnum = 0;
+    if (errnum >= sizeof_arr(error_str)) errnum = 0;
     return error_str[errnum];
 }

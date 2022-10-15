@@ -38,6 +38,8 @@
 #define max(a, b) ((a) > (b) ? (a) : (b))
 #define imax(a, b) (a = max(a, b))
 
+#define sizeof_arr(a) (sizeof(a) / sizeof(a[0]))
+
 #define sum(n, arr) \
     _Generic( \
         (arr), \
