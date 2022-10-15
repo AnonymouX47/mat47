@@ -1,7 +1,7 @@
 proj = mat47
 
 CC = gcc
-CFLAGS = -Wall -pedantic -c -o $@
+CFLAGS = -Wall -Wextra -pedantic -c -o $@
 TEST_LDFLAGS = -lcriterion
 BUILD = build
 SRC = src/mat47

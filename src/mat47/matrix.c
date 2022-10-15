@@ -20,7 +20,7 @@
 _Bool MAT47_LOG_DEBUG;
 _Bool MAT47_LOG_ERROR;
 FILE *MAT47_LOG_FILE;
-_Thread_local int mat47_errno;
+_Thread_local unsigned int mat47_errno;
 
 
 /**
@@ -366,7 +366,7 @@ intmax_t mat47_fprintf(
 }
 
 
-char *mat47_strerror(int errnum)
+char *mat47_strerror(unsigned int errnum)
 {
     static char *error_str[] = {
         [1] = "Unable to allocate memory",

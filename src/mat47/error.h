@@ -12,9 +12,9 @@
  *
  * The initial value is ``0`` and no function ever sets the value to ``0``.
  *
- * | When an error occurs within any function defined by
- *   this library, this variable is set to a positive value (one of the enumerators
- *   defined in :c:enum:`mat47_errors`) before the function returns.
+ * | When an error occurs within any function defined by this library, this variable
+ *   is set to a value (one of the enumerators defined in :c:enum:`mat47_errors`)
+ *   before the function returns.
  * | Across the documentation of this library, this is referred to as **"raising"**
  *   an error.
  *
@@ -22,7 +22,7 @@
  *     If the value will be examined after calling a function, it should be set to
  *     ``0`` before the call.
  */
-extern _Thread_local int mat47_errno;
+extern _Thread_local unsigned int mat47_errno;
 
 /**
  * Defines the errors *raised* by functions within this library.
@@ -62,6 +62,6 @@ enum mat47_errors {
  *     should be considered read-only. Any attempt to modify the string invokes
  *     undefined behaviour.
  */
-char *mat47_strerror(int errnum);
+char *mat47_strerror(unsigned int errnum);
 
 #endif  // MAT47_ERROR_H
