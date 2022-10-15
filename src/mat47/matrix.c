@@ -205,6 +205,12 @@ mat47_t *mat47_init_double(uint n_rows, uint n_cols, double restrict_p_p array)
 
 mat47_t *mat47_copy(const mat47_t *m)
 {
+    if (!m) {
+        mat47_errno = MAT47_ERR_NULL_PTR;
+        error(": m=%p", (void *)m);
+        return NULL;
+    }
+
     return mat47_init_double(m->n_rows, m->n_cols, m->data);
 }
 
