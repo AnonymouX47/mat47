@@ -142,8 +142,8 @@ void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value
  * Args:
  *     n_rows (unsigned int): Number of rows in the array
  *     n_cols (unsigned int): Number of columns in the array
- *     array (T *restrict *restrict): 2D array from which the matrix should be
- *       initialized (See the description of _T_ below)
+ *     array (T **restrict): 2D array from which the matrix should be initialized
+ *       (See the description of _T_ below)
  *
  * Returns:
  *     - A null pointer, if:
@@ -180,18 +180,16 @@ void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value
     )(n_rows, n_cols, array)
 
 // See `mat47_init`
-#define restrict_p_p *restrict *restrict
-mat47_t *mat47_init_int8(uint n_rows, uint n_cols, int8_t restrict_p_p array);
-mat47_t *mat47_init_int16(uint n_rows, uint n_cols, int16_t restrict_p_p array);
-mat47_t *mat47_init_int32(uint n_rows, uint n_cols, int32_t restrict_p_p array);
-mat47_t *mat47_init_int64(uint n_rows, uint n_cols, int64_t restrict_p_p array);
-mat47_t *mat47_init_uint8(uint n_rows, uint n_cols, uint8_t restrict_p_p array);
-mat47_t *mat47_init_uint16(uint n_rows, uint n_cols, uint16_t restrict_p_p array);
-mat47_t *mat47_init_uint32(uint n_rows, uint n_cols, uint32_t restrict_p_p array);
-mat47_t *mat47_init_uint64(uint n_rows, uint n_cols, uint64_t restrict_p_p array);
-mat47_t *mat47_init_float(uint n_rows, uint n_cols, float restrict_p_p array);
-mat47_t *mat47_init_double(uint n_rows, uint n_cols, double restrict_p_p array);
-#undef restrict_p_p
+mat47_t *mat47_init_int8(uint n_rows, uint n_cols, int8_t **restrict array);
+mat47_t *mat47_init_int16(uint n_rows, uint n_cols, int16_t **restrict array);
+mat47_t *mat47_init_int32(uint n_rows, uint n_cols, int32_t **restrict array);
+mat47_t *mat47_init_int64(uint n_rows, uint n_cols, int64_t **restrict array);
+mat47_t *mat47_init_uint8(uint n_rows, uint n_cols, uint8_t **restrict array);
+mat47_t *mat47_init_uint16(uint n_rows, uint n_cols, uint16_t **restrict array);
+mat47_t *mat47_init_uint32(uint n_rows, uint n_cols, uint32_t **restrict array);
+mat47_t *mat47_init_uint64(uint n_rows, uint n_cols, uint64_t **restrict array);
+mat47_t *mat47_init_float(uint n_rows, uint n_cols, float **restrict array);
+mat47_t *mat47_init_double(uint n_rows, uint n_cols, double **restrict array);
 
 /** Like `mat47_fprintf()` but with *stream* set to `stdout` */
 #define mat47_printf(m, format) mat47_fprintf(m, stdout, format)

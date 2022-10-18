@@ -46,7 +46,7 @@ _Thread_local unsigned int mat47_errno;
  */
 static mat47_t *mat47_new(unsigned int n_rows, unsigned int n_cols, bool zero)
 {
-    double **data;
+    double **restrict data;
 
     if (!(n_rows && n_cols)) {
         mat47_errno = MAT47_ERR_ZERO_SIZE;
@@ -101,10 +101,9 @@ mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols)
 }
 
 
-#define restrict_p_p *restrict *restrict
 #define init(n_rows, n_cols, array) \
     mat47_t *m; \
-    double **data, *data_row; \
+    double **restrict data, *restrict data_row; \
     restrict typeof(*array) row; \
 \
     if (!array) { \
@@ -129,55 +128,55 @@ mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols)
 \
     return m;
 
-mat47_t *mat47_init_int8(uint n_rows, uint n_cols, int8_t restrict_p_p array)
+mat47_t *mat47_init_int8(uint n_rows, uint n_cols, int8_t **restrict array)
 {
     init(n_rows, n_cols, array)
 }
 
-mat47_t *mat47_init_int16(uint n_rows, uint n_cols, int16_t restrict_p_p array)
+mat47_t *mat47_init_int16(uint n_rows, uint n_cols, int16_t **restrict array)
 {
     init(n_rows, n_cols, array)
 }
 
-mat47_t *mat47_init_int32(uint n_rows, uint n_cols, int32_t restrict_p_p array)
+mat47_t *mat47_init_int32(uint n_rows, uint n_cols, int32_t **restrict array)
 {
     init(n_rows, n_cols, array)
 }
 
-mat47_t *mat47_init_int64(uint n_rows, uint n_cols, int64_t restrict_p_p array)
+mat47_t *mat47_init_int64(uint n_rows, uint n_cols, int64_t **restrict array)
 {
     init(n_rows, n_cols, array)
 }
 
-mat47_t *mat47_init_uint8(uint n_rows, uint n_cols, uint8_t restrict_p_p array)
+mat47_t *mat47_init_uint8(uint n_rows, uint n_cols, uint8_t **restrict array)
 {
     init(n_rows, n_cols, array)
 }
 
-mat47_t *mat47_init_uint16(uint n_rows, uint n_cols, uint16_t restrict_p_p array)
+mat47_t *mat47_init_uint16(uint n_rows, uint n_cols, uint16_t **restrict array)
 {
     init(n_rows, n_cols, array)
 }
 
-mat47_t *mat47_init_uint32(uint n_rows, uint n_cols, uint32_t restrict_p_p array)
+mat47_t *mat47_init_uint32(uint n_rows, uint n_cols, uint32_t **restrict array)
 {
     init(n_rows, n_cols, array)
 }
 
-mat47_t *mat47_init_uint64(uint n_rows, uint n_cols, uint64_t restrict_p_p array)
+mat47_t *mat47_init_uint64(uint n_rows, uint n_cols, uint64_t **restrict array)
 {
     init(n_rows, n_cols, array)
 }
 
-mat47_t *mat47_init_float(uint n_rows, uint n_cols, float restrict_p_p array)
+mat47_t *mat47_init_float(uint n_rows, uint n_cols, float **restrict array)
 {
     init(n_rows, n_cols, array)
 }
 
-mat47_t *mat47_init_double(uint n_rows, uint n_cols, double restrict_p_p array)
+mat47_t *mat47_init_double(uint n_rows, uint n_cols, double **restrict array)
 {
     mat47_t *m;
-    double **data, *restrict row;
+    double **restrict data, *restrict row;
 
     if (!array) {
         mat47_errno = MAT47_ERR_NULL_PTR;
@@ -200,8 +199,6 @@ mat47_t *mat47_init_double(uint n_rows, uint n_cols, double restrict_p_p array)
     return m;
 }
 
-#undef restrict_p_p
-
 
 mat47_t *mat47_copy(const mat47_t *m)
 {
@@ -219,7 +216,7 @@ void mat47_del(mat47_t *m)
 {
     if (m) {
         if (m->data) {
-            double **data = m->data;
+            double **restrict data = m->data;
             unsigned int n_rows = m->n_rows;
 
             for (unsigned int i = 0; i < n_rows; i++) free(data[i]);
@@ -274,7 +271,7 @@ intmax_t mat47_fprintf(
         return -1;
     }
 
-    double *restrict row, *restrict *restrict data = m->data;
+    double *restrict row, **restrict data = m->data;
     unsigned int i, j, n_rows = m->n_rows, n_cols = m->n_cols;
     intmax_t n_bytes = 0;
 
