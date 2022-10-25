@@ -2,6 +2,8 @@
 
 #include "../src/mat47/matrix.c"
 
+/* new */
+
 Test(new, zero_size)
 {
     mat47_errno = 0;
@@ -92,6 +94,8 @@ Test(new, zeroed)
         }
 }
 
+/* init */
+
 Test(init, null_array)
 {
     mat47_errno = 0;
@@ -114,7 +118,7 @@ Test(init, T) \
     T a[3][2] = {{-128, -1}, {0, 1}, {2, 127}}; \
 \
     mat47_errno = 0; \
-    m = mat47_init(3, 2, ((T *[3]){a[0], a[1], a[2]})); \
+    m = mat47_init(sizeof_arr(a), sizeof_arr(a[0]), ((T *[3]){a[0], a[1], a[2]})); \
 \
     cr_assert_eq( \
         mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno) \
@@ -144,6 +148,8 @@ TestInit(float)
 TestInit(double)
 
 #undef TestInit
+
+/* copy */
 
 Test(copy, null_matrix_ptr)
 {
@@ -184,4 +190,52 @@ Test(copy, copy)
             );
 
     mat47_del(m1); mat47_del(m2);
+}
+
+/* elem */
+
+Test(elem, get)
+{
+    unsigned int i, j;
+    double a[3][2] = {{-128, -1}, {0, 1}, {2, 127}};
+    unsigned char indexes[][2] = {
+        {0, 1},
+        {sizeof_arr(a) + 1, 1},
+        {1, 0},
+        {1, sizeof_arr(a[0]) + 1},
+        {0, 0},
+        {sizeof_arr(a) + 1, sizeof_arr(a[0]) + 1}
+    };
+    mat47_t *m;
+
+    mat47_errno = 0;
+    m = mat47_init(sizeof_arr(a), sizeof_arr(a[0]), ((double *[3]){a[0], a[1], a[2]}));
+
+    cr_assert_eq(
+        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno)
+    );
+
+    for (i = 0; i < sizeof_arr(indexes); i++) {
+        mat47_errno = 0;
+        mat47_get_elem(m, indexes[i][0], indexes[i][1]);
+
+        cr_assert_eq(
+            mat47_errno, MAT47_ERR_INDEX_OUT_OF_RANGE,
+            "[%u,%u] should be out of range", indexes[i][0], indexes[i][1]
+        );
+    };
+
+    mat47_errno = 0;
+    for (i = 1; i <= sizeof_arr(a); i++) {
+        for (j = 1; j <= sizeof_arr(a[0]); j++) {
+            cr_assert_eq(
+                mat47_get_elem(m, i, j), m->data[i-1][j-1],
+                "`get_elem() = %f`, `m[][] = %f`; i=%u, j=%u; (error: %s)",
+                mat47_get_elem(m, i, j), m->data[i-1][j-1], i, j,
+                mat47_strerror(mat47_errno)
+            );
+        }
+    }
+
+    mat47_del(m);
 }
