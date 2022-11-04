@@ -17,9 +17,6 @@
 
 #define uint unsigned int  // Used only where necessary, to avoid long lines
 
-_Bool MAT47_LOG_DEBUG;
-_Bool MAT47_LOG_ERROR;
-FILE *MAT47_LOG_FILE;
 _Thread_local unsigned int mat47_errno;
 
 

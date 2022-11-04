@@ -1,6 +1,7 @@
 #include <criterion/criterion.h>
 
 #include "../src/mat47/matrix.c"
+#include "../src/mat47/utils.c"
 
 /* new */
 

@@ -50,8 +50,8 @@
 extern _Bool MAT47_LOG_DEBUG;
 extern _Bool MAT47_LOG_ERROR;
 extern FILE *MAT47_LOG_FILE;
-static _Thread_local struct timespec log_timespec;
-static _Thread_local char time_str[9];
+extern _Thread_local struct timespec log_timespec;
+extern _Thread_local char time_str[9];
 
 #define _sum(n, arr) \
     intmax_t sum = 0; \
