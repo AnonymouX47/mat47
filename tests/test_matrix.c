@@ -239,3 +239,50 @@ Test(elem, get)
 
     mat47_del(m);
 }
+
+Test(elem, set)
+{
+    unsigned int i, j;
+    double a[3][2] = {{-128, -1}, {0, 1}, {2, 127}};
+    unsigned char indexes[][2] = {
+        {0, 1},
+        {sizeof_arr(a) + 1, 1},
+        {1, 0},
+        {1, sizeof_arr(a[0]) + 1},
+        {0, 0},
+        {sizeof_arr(a) + 1, sizeof_arr(a[0]) + 1}
+    };
+    mat47_t *m;
+
+    mat47_errno = 0;
+    m = mat47_zero(sizeof_arr(a), sizeof_arr(a[0]));
+
+    cr_assert_eq(
+        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno)
+    );
+
+    for (i = 0; i < sizeof_arr(indexes); i++) {
+        mat47_errno = 0;
+        mat47_set_elem(m, indexes[i][0], indexes[i][1], 0.0);
+
+        cr_assert_eq(
+            mat47_errno, MAT47_ERR_INDEX_OUT_OF_RANGE,
+            "[%u,%u] should be out of range", indexes[i][0], indexes[i][1]
+        );
+    };
+
+    mat47_errno = 0;
+    for (i = 1; i <= sizeof_arr(a); i++) {
+        for (j = 1; j <= sizeof_arr(a[0]); j++) {
+            mat47_set_elem(m, i, j, a[i-1][j-1]);
+            cr_assert_eq(
+                m->data[i-1][j-1], a[i-1][j-1],
+                "`m[][] = %f`, `a[][] = %f`; i=%u, j=%u; (error: %s)",
+                m->data[i-1][j-1], a[i-1][j-1], i, j,
+                mat47_strerror(mat47_errno)
+            );
+        }
+    }
+
+    mat47_del(m);
+}
