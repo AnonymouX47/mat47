@@ -303,7 +303,8 @@ intmax_t mat47_fprintf(
         "Formatted elements: "
         "[1, 1] = \"%s\" (%f), [1, 2] = \"%s\" (%f), [%d, %d] = \"%s\" (%f)",
         mat_str[0], data[0][0],
-        mat_str[0] + (ELEM_MAX_LEN + 1), data[0][1],
+        (m->n_rows > 1 ? mat_str[0] + (ELEM_MAX_LEN + 1) : "Out of range"),
+        (m->n_rows > 1 ? data[0][1] : NAN),
         n_rows, n_cols,
         mat_str[n_rows - 1] + ((n_cols - 1) * (ELEM_MAX_LEN + 1)),
         data[n_rows - 1][n_cols - 1]
