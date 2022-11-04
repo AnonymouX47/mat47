@@ -47,6 +47,12 @@
         uint8_t *: usum8, uint16_t *: usum16, uint32_t *: usum32, uint64_t *: usum64 \
     )(n, arr)
 
+#define check_ptr(p) ( \
+    (p) \
+    ? false \
+    : (mat47_errno = MAT47_ERR_NULL_PTR, error(": `" #p "` is NULL"), true) \
+)
+
 extern _Bool MAT47_LOG_DEBUG;
 extern _Bool MAT47_LOG_ERROR;
 extern FILE *MAT47_LOG_FILE;

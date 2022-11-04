@@ -195,6 +195,16 @@ Test(copy, copy)
 
 /* elem */
 
+Test(elem, get_null_matrix_ptr)
+{
+    mat47_errno = 0;
+    mat47_get_elem(NULL, 1, 1);
+    cr_assert_eq(
+        mat47_errno, MAT47_ERR_NULL_PTR,
+        "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
+    );
+}
+
 Test(elem, get)
 {
     unsigned int i, j;
@@ -239,6 +249,16 @@ Test(elem, get)
     }
 
     mat47_del(m);
+}
+
+Test(elem, set_null_matrix_ptr)
+{
+    mat47_errno = 0;
+    mat47_set_elem(NULL, 1, 1, 0.0);
+    cr_assert_eq(
+        mat47_errno, MAT47_ERR_NULL_PTR,
+        "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
+    );
 }
 
 Test(elem, set)

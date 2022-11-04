@@ -199,12 +199,7 @@ mat47_t *mat47_init_double(uint n_rows, uint n_cols, double **restrict array)
 
 mat47_t *mat47_copy(const mat47_t *m)
 {
-    if (!m) {
-        mat47_errno = MAT47_ERR_NULL_PTR;
-        error(": m=%p", (void *)m);
-        return NULL;
-    }
-
+    if (check_ptr(m)) return NULL;
     return mat47_init_double(m->n_rows, m->n_cols, m->data);
 }
 
@@ -227,6 +222,7 @@ void mat47_del(mat47_t *m)
 
 double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col)
 {
+    if (check_ptr(m)) return NAN;
     if (!row || !col || row > m->n_rows || col > m->n_cols) {
         mat47_errno = MAT47_ERR_INDEX_OUT_OF_RANGE;
         error(": row=%u, n_rows=%u col=%u, n_cols=%u", row, m->n_rows, col, m->n_cols);
@@ -239,6 +235,7 @@ double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col)
 
 void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value)
 {
+    if (check_ptr(m)) return;
     if (!row || !col || row > m->n_rows || col > m->n_cols) {
         mat47_errno = MAT47_ERR_INDEX_OUT_OF_RANGE;
         error(": row=%u, n_rows=%u col=%u, n_cols=%u", row, m->n_rows, col, m->n_cols);
@@ -255,13 +252,7 @@ void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value
 intmax_t mat47_fprintf(
     const mat47_t *m, FILE *restrict stream, const char *restrict format
 ) {
-    if (!(m && stream && format)) {
-        mat47_errno = MAT47_ERR_NULL_PTR;
-        error(
-            ": m=%p, stream=%p, format=%p", (void *)m, (void *)stream, (void *)format
-        );
-        return -1;
-    }
+    if (check_ptr(m) || check_ptr(stream) || check_ptr(format)) return -1;
     if (!*format) {
         mat47_errno = MAT47_ERR_ZERO_SIZE;
         error(": empty element format string");
