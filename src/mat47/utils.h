@@ -10,7 +10,6 @@
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <time.h>
 
 #include "error.h"
 
@@ -37,16 +36,8 @@
 
 #define log_(level, msg, ...) fprintf( \
     (MAT47_LOG_FILE ? MAT47_LOG_FILE : stderr), \
-    "(%s.%ld) " __FILE__ ":%d: %s: [" level "] " msg "\n", \
-    ( \
-        strftime( \
-            time_str, 9, "%T", \
-            localtime_r(&(time_t){time(NULL)}, &(struct tm){0}) \
-        ), \
-        time_str \
-    ), \
-    (timespec_get(&log_timespec, TIME_UTC), log_timespec.tv_nsec), \
-    __LINE__, __func__, ##__VA_ARGS__ \
+    "(%s) " __FILE__ ":%d: %s: [" level "] " msg "\n", \
+    mat47__get_timestamp(), __LINE__, __func__, ##__VA_ARGS__ \
 )
 
 #define debug(msg, ...) (MAT47_LOG_DEBUG ? log_("DEBUG", msg, ##__VA_ARGS__) : 0) \
@@ -73,8 +64,6 @@
 extern _Bool MAT47_LOG_DEBUG;
 extern _Bool MAT47_LOG_ERROR;
 extern FILE *MAT47_LOG_FILE;
-extern _Thread_local struct timespec log_timespec;
-extern _Thread_local char time_str[9];
 
 #define _sum \
     intmax_t sum = 0; \
@@ -92,5 +81,7 @@ static uintmax_t usum32(unsigned int n, uint32_t arr[]) {_sum}
 static uintmax_t usum64(unsigned int n, uint64_t arr[]) {_sum}
 
 #undef _sum
+
+char *mat47__get_timestamp(void);
 
 #endif  // MAT47_UTILS_H
