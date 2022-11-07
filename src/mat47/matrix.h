@@ -1,7 +1,7 @@
 /* Main matrix definitions
  *
  * Copyright (c) 2022 AnonymouX47
- * See https://github.com/AnonymouX47/mat47/LICENCE for license information.
+ * See https://github.com/AnonymouX47/mat47/LICENSE for license information.
  */
 
 #ifndef MAT47_MATRIX_H
