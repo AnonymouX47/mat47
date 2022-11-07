@@ -7,11 +7,33 @@
 #ifndef MAT47_UTILS_H
 #define MAT47_UTILS_H
 
+#include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <time.h>
 
 #include "error.h"
+
+#define check(expr, errnum, msg, ...) ( \
+    (expr) \
+    ? false \
+    : (mat47_errno = errnum, error(msg, ##__VA_ARGS__), true) \
+)
+
+#define check_ptr(p) \
+    check(p, MAT47_ERR_NULL_PTR, ": `"#p"` is NULL")
+
+#define check_col(m, index) check( \
+    index >= 1 && index <= m->n_cols, \
+    MAT47_ERR_INDEX_OUT_OF_RANGE, \
+    ": col=%"PRIdMAX", n_cols=%u", (intmax_t)index, m->n_cols \
+)
+
+#define check_row(m, index) check( \
+    index >= 1 && index <= m->n_rows, \
+    MAT47_ERR_INDEX_OUT_OF_RANGE, \
+    ": row=%"PRIdMAX", n_rows=%u", (intmax_t)index, m->n_rows \
+)
 
 #define log_(level, msg, ...) fprintf( \
     (MAT47_LOG_FILE ? MAT47_LOG_FILE : stderr), \
@@ -47,11 +69,6 @@
         uint8_t *: usum8, uint16_t *: usum16, uint32_t *: usum32, uint64_t *: usum64 \
     )(n, arr)
 
-#define check_ptr(p) ( \
-    (p) \
-    ? false \
-    : (mat47_errno = MAT47_ERR_NULL_PTR, error(": `" #p "` is NULL"), true) \
-)
 
 extern _Bool MAT47_LOG_DEBUG;
 extern _Bool MAT47_LOG_ERROR;

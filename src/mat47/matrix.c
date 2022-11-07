@@ -223,11 +223,7 @@ void mat47_del(mat47_t *m)
 double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col)
 {
     if (check_ptr(m)) return NAN;
-    if (!row || !col || row > m->n_rows || col > m->n_cols) {
-        mat47_errno = MAT47_ERR_INDEX_OUT_OF_RANGE;
-        error(": row=%u, n_rows=%u col=%u, n_cols=%u", row, m->n_rows, col, m->n_cols);
-        return NAN;
-    }
+    if (check_row(m, row) || check_col(m, col)) return NAN;
 
     return m->data[row - 1][col - 1];
 }
@@ -236,11 +232,7 @@ double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col)
 void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value)
 {
     if (check_ptr(m)) return;
-    if (!row || !col || row > m->n_rows || col > m->n_cols) {
-        mat47_errno = MAT47_ERR_INDEX_OUT_OF_RANGE;
-        error(": row=%u, n_rows=%u col=%u, n_cols=%u", row, m->n_rows, col, m->n_cols);
-        return;
-    }
+    if (check_row(m, row) || check_col(m, col)) return;
 
     m->data[row - 1][col - 1] = value;
 }
