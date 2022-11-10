@@ -66,8 +66,8 @@ typedef struct mat47 mat47_t;
  *
  *     - Otherwise, a pointer to a copy of *m*.
  *
- * Raises:
- *     MAT47_ERR_NULL_PTR: *m* is null.
+ * ERRORS:
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* is null
  */
 mat47_t *mat47_copy(const mat47_t *m);
 
@@ -99,10 +99,12 @@ void mat47_del(mat47_t *m);
  *
  *     - Otherwise, the amount of characters written to the stream.
  *
- * Raises:
- *     MAT47_ERR_NULL_PTR: At least one of the arguments is null.
- *     MAT47_ERR_ZERO_SIZE: The element format string (*format*) is empty.
- *     MAT47_ERR_ALLOC: Unable to allocate memory.
+ * ERRORS:
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: At least one of the
+ *       arguments is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_ZERO_SIZE`: The element format string
+ *       (*format*) is empty
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_ALLOC`: Unable to allocate memory
  *
  * Note:
  *     - The string representation of each element has a length limit of 24 characters.
@@ -132,9 +134,10 @@ intmax_t mat47_fprintf(
  *     - ``NAN``, if either index is out of range.
  *     - Otherwise, the element at ``m[row, col]``.
  *
- * Raises:
- *     MAT47_ERR_NULL_PTR: *m* is null.
- *     MAT47_ERR_INDEX_OUT_OF_RANGE: Either index is out of range.
+ * ERRORS:
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_INDEX_OUT_OF_RANGE`: Either index is
+ *       out of range
  */
 double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col);
 
@@ -157,10 +160,11 @@ double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col);
  *
  *     - Otherwise, a pointer to a new initialized matrix.
  *
- * Raises:
- *     MAT47_ERR_NULL_PTR: *array*, or any of the pointers it points to, is null.
- *     MAT47_ERR_ZERO_SIZE: Either dimension equals zero.
- *     MAT47_ERR_ALLOC: Unable to allocate memory.
+ * ERRORS:
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *array*, or any of the
+ *       pointers it points to, is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_ZERO_SIZE`: Either dimension equals zero
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_ALLOC`: Unable to allocate memory
  *
  * This is a generic interface which accepts an array of (or pointer to) pointers to
  * various arithmetic types. Hence, ``T`` can be any of the following types (or any
@@ -211,9 +215,10 @@ mat47_t *mat47_init_double(uint n_rows, uint n_cols, double **restrict array);
  *     col: The **1-based** index of the element's column
  *     value: The new value of the element
  *
- * Raises:
- *     MAT47_ERR_NULL_PTR: *m* is null.
- *     MAT47_ERR_INDEX_OUT_OF_RANGE: Either index is out of range.
+ * ERRORS:
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_INDEX_OUT_OF_RANGE`: Either index is
+ *       out of range.
  */
 void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value);
 
@@ -229,9 +234,9 @@ void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value
  *       memory allocation.
  *     - Otherwise, a pointer to a new zero matrix.
  *
- * Raises:
- *     MAT47_ERR_ZERO_SIZE: Either dimension equals zero.
- *     MAT47_ERR_ALLOC: Unable to allocate memory.
+ * ERRORS:
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_ZERO_SIZE`: Either dimension equals zero
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_ALLOC`: Unable to allocate memory
  */
 mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols);
 
