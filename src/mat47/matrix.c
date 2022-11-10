@@ -98,16 +98,12 @@ mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols)
 }
 
 
-#define init(n_rows, n_cols, array) \
+#define init \
     mat47_t *m; \
     double **restrict data, *restrict data_row; \
     restrict typeof(*array) row; \
 \
-    if (!array) { \
-        mat47_errno = MAT47_ERR_NULL_PTR; \
-        error(": `array`"); \
-        return NULL; \
-    } \
+    if (check_ptr(array)) return NULL; \
     if (!(m = mat47_new(n_rows, n_cols, false))) return NULL; \
 \
     data = m->data; \
@@ -127,59 +123,57 @@ mat47_t *mat47_zero(unsigned int n_rows, unsigned int n_cols)
 
 mat47_t *mat47_init_int8(uint n_rows, uint n_cols, int8_t **restrict array)
 {
-    init(n_rows, n_cols, array)
+    init
 }
 
 mat47_t *mat47_init_int16(uint n_rows, uint n_cols, int16_t **restrict array)
 {
-    init(n_rows, n_cols, array)
+    init
 }
 
 mat47_t *mat47_init_int32(uint n_rows, uint n_cols, int32_t **restrict array)
 {
-    init(n_rows, n_cols, array)
+    init
 }
 
 mat47_t *mat47_init_int64(uint n_rows, uint n_cols, int64_t **restrict array)
 {
-    init(n_rows, n_cols, array)
+    init
 }
 
 mat47_t *mat47_init_uint8(uint n_rows, uint n_cols, uint8_t **restrict array)
 {
-    init(n_rows, n_cols, array)
+    init
 }
 
 mat47_t *mat47_init_uint16(uint n_rows, uint n_cols, uint16_t **restrict array)
 {
-    init(n_rows, n_cols, array)
+    init
 }
 
 mat47_t *mat47_init_uint32(uint n_rows, uint n_cols, uint32_t **restrict array)
 {
-    init(n_rows, n_cols, array)
+    init
 }
 
 mat47_t *mat47_init_uint64(uint n_rows, uint n_cols, uint64_t **restrict array)
 {
-    init(n_rows, n_cols, array)
+    init
 }
 
 mat47_t *mat47_init_float(uint n_rows, uint n_cols, float **restrict array)
 {
-    init(n_rows, n_cols, array)
+    init
 }
+
+#undef init
 
 mat47_t *mat47_init_double(uint n_rows, uint n_cols, double **restrict array)
 {
     mat47_t *m;
     double **restrict data, *restrict row;
 
-    if (!array) {
-        mat47_errno = MAT47_ERR_NULL_PTR;
-        error(": `array`");
-        return NULL;
-    }
+    if (check_ptr(array)) return NULL;
     if (!(m = mat47_new(n_rows, n_cols, false))) return NULL;
 
     data = m->data;
