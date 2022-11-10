@@ -1,5 +1,7 @@
 proj = mat47
 
+.PHONY: docs
+
 CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -c -o $@
 TEST_LDFLAGS = -lcriterion
@@ -42,6 +44,9 @@ $(BUILD)/test_%.o: tests/test_%.c $(SRC)/%.c $(headers)
 
 bin/ $(BUILD)/:
 	mkdir $@
+
+docs:
+	cd docs && make html
 
 clean:
 	rm -vrf bin $(BUILD)
