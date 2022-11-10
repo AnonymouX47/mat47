@@ -25,7 +25,7 @@ extern _Bool MAT47_LOG_ERROR;
 /**
  * Stream to which library logs should be written.
  *
- * If null (default), logs are written to `stderr`.
+ * If null (default), logs are written to ``stderr``.
  *
  * Note:
  *     Only used when either or both debug and/or error logs are enabled via
@@ -37,12 +37,20 @@ extern _Bool MAT47_LOG_ERROR;
  */
 extern FILE *MAT47_LOG_FILE;
 
-/** The matrix type */
-typedef struct {
+/** The matrix type definition */
+struct mat47 {
+
+    /** Number of rows */
     unsigned int n_rows;
+
+    /** Number of columns */
     unsigned int n_cols;
+
     double **data;
-} mat47_t;
+};
+
+/** The matrix type (Alias of :c:struct:`struct mat47<mat47>`) */
+typedef struct mat47 mat47_t;
 
 /**
  * Copies a matrix.
@@ -51,10 +59,15 @@ typedef struct {
  *     m: The source matrix
  *
  * Returns:
- *     - A null pointer, if:
+ *     - A null pointer, if
+ *
  *       - *m* is null, or
- *       - a failure occurs during memory allocation.
- *     - Otherwise, a pointer to a **deep** copy of *m*.
+ *       - a failure occured during memory allocation.
+ *
+ *     - Otherwise, a pointer to a copy of *m*.
+ *
+ * Raises:
+ *     MAT47_ERR_NULL_PTR: *m* is null.
  */
 mat47_t *mat47_copy(const mat47_t *m);
 
@@ -76,12 +89,14 @@ void mat47_del(mat47_t *m);
  *     m: The matrix whose representation should be written
  *     stream: A narrow-oriented stream to which the matrix representation should be
  *       written
- *     format: A valid format specifier for a `double`, to be applied to every element
+ *     format: A valid format specifier for a ``double``, to be applied to every element
  *
  * Returns:
- *     - `-1`, if:
+ *     - ``-1``, if
+ *
  *       - any argument is null, or
  *       - a failure occurs during memory allocation.
+ *
  *     - Otherwise, the amount of characters written to the stream.
  *
  * Raises:
@@ -92,8 +107,8 @@ void mat47_del(mat47_t *m);
  * Note:
  *     - The string representation of each element has a length limit of 24 characters.
  *       Beyond that, an element's string representation is simply truncated.
- *     - If *format* is invalid for a `double` or not null-terminated, the behaviour is
- *       undefined.
+ *     - If *format* is invalid for a ``double`` or not null-terminated, the behaviour
+ *       is undefined.
  *     - If the number of bytes written is greater than INTMAX_MAX, the return value is
  *       undefined.
  *     - *stream* is not explicitly flushed.
@@ -102,7 +117,7 @@ intmax_t mat47_fprintf(
     const mat47_t *m, FILE *restrict stream, const char *restrict format
 );
 
-/** Like `mat47_fprintf()` but with *format* set to `MAT47_ELEM_FMT` */
+/** Like :c:func:`mat47_fprintf` but with *format* set to :c:macro:`MAT47_ELEM_FMT` */
 #define mat47_fprint(m, stream) mat47_fprintf(m, stream, MAT47_ELEM_FMT)
 
 /**
@@ -127,16 +142,19 @@ double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col);
  * Creates a new matrix and initializes it from the given array.
  *
  * Args:
- *     n_rows (unsigned int): Number of rows in the array
- *     n_cols (unsigned int): Number of columns in the array
- *     array (T **restrict): 2D array from which the matrix should be initialized
- *       (See the description of _T_ below)
+ *     n_rows (``unsigned int``): Number of rows in the array
+ *     n_cols (``unsigned int``): Number of columns in the array
+ *     array (``T **restrict``): 2D array from which the matrix should be initialized
+ *       (See the description of ``T`` below)
  *
  * Returns:
- *     - A null pointer, if:
+ *     :c:type:`mat47_t *<mat47_t>`:
+ *     - A null pointer, if
+ *
  *       - either dimension equals zero, or
  *       - *array* (or any of the pointers it points to) is null, or
  *       - a failure occurs during memory allocation.
+ *
  *     - Otherwise, a pointer to a new initialized matrix.
  *
  * Raises:
@@ -145,12 +163,12 @@ double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col);
  *     MAT47_ERR_ALLOC: Unable to allocate memory.
  *
  * This is a generic interface which accepts an array of (or pointer to) pointers to
- * various arithmetic types. Hence, _T_ can be any of the following types (or any type
- * compatible with any of these):
+ * various arithmetic types. Hence, ``T`` can be any of the following types (or any
+ * type compatible with any of these):
  *
- * - Signed integer: `int8_t`, `int16_t`, `int32_t`, `int64_t`
- * - Unsigned integer: `uint8_t`, `uint16_t`, `uint32_t`, `uint64_t`
- * - Floating-point: `float`, `double`
+ * - Signed integer: ``int8_t``, ``int16_t``, ``int32_t``, ``int64_t``
+ * - Unsigned integer: ``uint8_t``, ``uint16_t``, ``uint32_t``, ``uint64_t``
+ * - Floating-point: ``float``, ``double``
  *
  * Note:
  *     The behaviour is undefined if either dimension is greater than the respective
@@ -166,7 +184,7 @@ double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col);
         float **: mat47_init_float, double **: mat47_init_double \
     )(n_rows, n_cols, array)
 
-// See `mat47_init`
+// See ``mat47_init``
 mat47_t *mat47_init_int8(uint n_rows, uint n_cols, int8_t **restrict array);
 mat47_t *mat47_init_int16(uint n_rows, uint n_cols, int16_t **restrict array);
 mat47_t *mat47_init_int32(uint n_rows, uint n_cols, int32_t **restrict array);
@@ -178,10 +196,10 @@ mat47_t *mat47_init_uint64(uint n_rows, uint n_cols, uint64_t **restrict array);
 mat47_t *mat47_init_float(uint n_rows, uint n_cols, float **restrict array);
 mat47_t *mat47_init_double(uint n_rows, uint n_cols, double **restrict array);
 
-/** Like `mat47_fprintf()` but with *stream* set to `stdout` */
+/** Like :c:func:`mat47_fprintf` but with *stream* set to ``stdout`` */
 #define mat47_printf(m, format) mat47_fprintf(m, stdout, format)
 
-/** Like `mat47_printf()` but with *format* set to `MAT47_ELEM_FMT` */
+/** Like :c:func:`mat47_printf` but with *format* set to :c:macro:`MAT47_ELEM_FMT` */
 #define mat47_print(m) mat47_printf(m, MAT47_ELEM_FMT)
 
 /**

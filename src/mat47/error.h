@@ -59,7 +59,7 @@ enum mat47_errors {
  *
  * Note:
  *     Any string returned by this function has **static** storage duration and
- *     should be considered read-only. Any attempt to modify the string invokes
+ *     should be considered **read-only**. Any attempt to modify the string invokes
  *     undefined behaviour.
  */
 char *mat47_strerror(unsigned int errnum);
