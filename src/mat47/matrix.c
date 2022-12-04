@@ -232,6 +232,52 @@ void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value
 }
 
 
+mat47_t *
+mat47_get_submat
+(const mat47_t *m, unsigned top, unsigned left, unsigned bottom, unsigned right)
+{
+    long n_rows, n_cols;
+    double **restrict data, **restrict array, *restrict row;
+    mat47_t *new;
+
+    if (check_ptr(m)) return NULL;
+    if (
+        check_row(m, top)
+        || check_col(m, left)
+        || check_row(m, bottom)
+        || check_col(m, right)
+    ) return NULL;
+
+    if ((n_rows = bottom - top + 1) < 1) {
+        mat47_errno = MAT47_ERR_ZERO_SIZE;
+        error(": top=%u, bottom=%u", top, bottom);
+        return NULL;
+    }
+    if ((n_cols = right - left + 1) < 1) {
+        mat47_errno = MAT47_ERR_ZERO_SIZE;
+        error(": left=%u, right=%u", left, right);
+        return NULL;
+    }
+
+    if (!(new = mat47_new(n_rows, n_cols, false))) return NULL;
+
+    array = m->data;
+    data = new->data;
+    --top; --left;  // Change to zero-based
+    for (unsigned int i = 0; i < n_rows; i++) {
+        if (!(row = array[top + i])) {
+            mat47_del(new);
+            mat47_errno = MAT47_ERR_NULL_PTR;
+            error(": `m->data[%u]`", i);
+            return NULL;
+        }
+        memcpy(data[i], row + left, sizeof(double) * n_cols);
+    }
+
+    return new;
+}
+
+
 #define ELEM_MAX_LEN 24
 #define ELEM_MAX_LEN_NDIGITS 2
 

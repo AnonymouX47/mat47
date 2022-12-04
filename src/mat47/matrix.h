@@ -142,6 +142,32 @@ intmax_t mat47_fprintf(
 double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col);
 
 /**
+ * Retrieves a sub-matrix.
+ *
+ * Args:
+ *     m: The matrix from which to retrieve a sub-matrix
+ *     top: The **1-based** index of the sub-matrix's top row
+ *     left: The **1-based** index of the sub-matrix's leftmost column
+ *     bottom: The **1-based** index of the sub-matrix's bottom row
+ *     right: The **1-based** index of the sub-matrix's rightmost column
+ *
+ * Returns:
+ *     - A null pointer, if any of the error conditions below occur.
+ *     - Otherwise, a pointer to a new matrix equal to ``m[top:bottom , left:right]``.
+ *
+ * ERRORS:
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_INDEX_OUT_OF_RANGE`: Any index is
+ *       out of range
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_ZERO_SIZE`: Either dimension of the
+ *       sub-matrix is less than or equal to zero
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_ALLOC`: Unable to allocate memory
+ */
+mat47_t *
+mat47_get_submat
+(const mat47_t *m, unsigned top, unsigned left, unsigned bottom, unsigned right);
+
+/**
  * Creates a new matrix and initializes it from the given array.
  *
  * Args:
