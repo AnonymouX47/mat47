@@ -59,15 +59,12 @@ typedef struct mat47 mat47_t;
  *     m: The source matrix
  *
  * Returns:
- *     - A null pointer, if
- *
- *       - *m* is null, or
- *       - a failure occured during memory allocation.
- *
+ *     - A null pointer, if any of the error conditions below occur.
  *     - Otherwise, a pointer to a copy of *m*.
  *
  * ERRORS:
  *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_ALLOC`: Unable to allocate memory
  */
 mat47_t *mat47_copy(const mat47_t *m);
 
@@ -92,11 +89,7 @@ void mat47_del(mat47_t *m);
  *     format: A valid format specifier for a ``double``, to be applied to every element
  *
  * Returns:
- *     - ``-1``, if
- *
- *       - any argument is null, or
- *       - a failure occurs during memory allocation.
- *
+ *     - ``-1``, if any of the error conditions below occur.
  *     - Otherwise, the amount of characters written to the stream.
  *
  * ERRORS:
@@ -131,7 +124,7 @@ intmax_t mat47_fprintf(
  *     col: The **1-based** index of the element's column
  *
  * Returns:
- *     - ``NAN``, if either index is out of range.
+ *     - ``NAN``, if any of the error conditions below occur.
  *     - Otherwise, the element at ``m[row, col]``.
  *
  * ERRORS:
@@ -178,12 +171,7 @@ mat47_get_submat
  *
  * Returns:
  *     :c:type:`mat47_t *<mat47_t>`:
- *     - A null pointer, if
- *
- *       - either dimension equals zero, or
- *       - *array* (or any of the pointers it points to) is null, or
- *       - a failure occurs during memory allocation.
- *
+ *     - A null pointer, if any of the error conditions below occur.
  *     - Otherwise, a pointer to a new initialized matrix.
  *
  * ERRORS:
@@ -256,8 +244,7 @@ void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value
  *     n_cols: Number of columns
  *
  * Returns:
- *     - A null pointer, if either dimension equals zero or a failure occurs during
- *       memory allocation.
+ *     - A null pointer, if any of the error conditions below occur.
  *     - Otherwise, a pointer to a new zero matrix.
  *
  * ERRORS:
