@@ -248,12 +248,12 @@ mat47_get_submat
         || check_col(m, right)
     ) return NULL;
 
-    if ((n_rows = bottom - top + 1) < 1) {
+    if ((n_rows = (long)bottom - top + 1) < 1) {
         mat47_errno = MAT47_ERR_ZERO_SIZE;
         error(": top=%u, bottom=%u", top, bottom);
         return NULL;
     }
-    if ((n_cols = right - left + 1) < 1) {
+    if ((n_cols = (long)right - left + 1) < 1) {
         mat47_errno = MAT47_ERR_ZERO_SIZE;
         error(": left=%u, right=%u", left, right);
         return NULL;
