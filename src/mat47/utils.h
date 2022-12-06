@@ -22,6 +22,9 @@
 #define check_ptr(p) \
     check(p, MAT47_ERR_NULL_PTR, ": " #p)
 
+#define check_eq(a, b) \
+    check((a) == (b), MAT47_ERR_DIM_MISMATCH, ": (" #a ") != (" #b ")")
+
 #define check_col(m, index) check( \
     (index) >= 1 && (index) <= (m)->n_cols, \
     MAT47_ERR_INDEX_OUT_OF_RANGE, \

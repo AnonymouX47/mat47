@@ -238,6 +238,31 @@ mat47_t *mat47_init_double(uint n_rows, uint n_cols, double **restrict array);
 void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value);
 
 /**
+ * Modifies a sub-matrix.
+ *
+ * Args:
+ *     m: The matrix whose sub-matrix is to be modified
+ *     top: The **1-based** index of the sub-matrix's top row
+ *     left: The **1-based** index of the sub-matrix's leftmost column
+ *     bottom: The **1-based** index of the sub-matrix's bottom row
+ *     right: The **1-based** index of the sub-matrix's rightmost column
+ *     m: The matrix whose value the sub-matrix will be set to
+ *
+ * ERRORS:
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m*, *sub* or any of their
+ *       internal data pointers is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_INDEX_OUT_OF_RANGE`: Any index is
+ *       out of range
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_ZERO_SIZE`: Either dimension of the
+ *       sub-matrix is less than or equal to zero
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_DIM_MISMATCH`: *sub* and the specified
+ *       sub-matrix are not equally sized.
+ */
+void
+mat47_set_submat
+(mat47_t *m, uint top, uint left, uint bottom, uint right, const mat47_t *sub);
+
+/**
  * Creates a new zero matrix.
  *
  * Args:
