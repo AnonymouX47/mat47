@@ -149,7 +149,8 @@ double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col);
  *     - Otherwise, a pointer to a new matrix equal to ``m[top:bottom , left:right]``.
  *
  * ERRORS:
- *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* or any of its internal
+ *       data pointers is null
  *     - :c:enumerator:`~mat47_errors.MAT47_ERR_INDEX_OUT_OF_RANGE`: Any index is
  *       out of range
  *     - :c:enumerator:`~mat47_errors.MAT47_ERR_ZERO_SIZE`: Either dimension of the

@@ -237,10 +237,13 @@ mat47_get_submat
 (const mat47_t *m, unsigned top, unsigned left, unsigned bottom, unsigned right)
 {
     long n_rows, n_cols;
-    double **restrict data, **restrict array, *restrict row;
-    mat47_t *new;
+    double **restrict data, **restrict sub_data, *restrict row;
+    mat47_t *sub;
 
-    if (check_ptr(m)) return NULL;
+    // Null pointers
+    if (check_ptr(m) || check_ptr(m->data)) return NULL;
+
+    // Out-of-range indexes
     if (
         check_row(m, top)
         || check_col(m, left)
@@ -248,6 +251,7 @@ mat47_get_submat
         || check_col(m, right)
     ) return NULL;
 
+    // Empty sub-matrix
     if ((n_rows = (long)bottom - top + 1) < 1) {
         mat47_errno = MAT47_ERR_ZERO_SIZE;
         error(": top=%u, bottom=%u", top, bottom);
@@ -259,22 +263,22 @@ mat47_get_submat
         return NULL;
     }
 
-    if (!(new = mat47_new(n_rows, n_cols, false))) return NULL;
+    if (!(sub = mat47_new(n_rows, n_cols, false))) return NULL;
 
-    array = m->data;
-    data = new->data;
+    data = m->data;
+    sub_data = sub->data;
     --top; --left;  // Change to zero-based
     for (unsigned int i = 0; i < n_rows; i++) {
-        if (!(row = array[top + i])) {
-            mat47_del(new);
+        if (!(row = data[top + i])) {
+            mat47_del(sub);
             mat47_errno = MAT47_ERR_NULL_PTR;
-            error(": `m->data[%u]`", i);
+            error(": `m->data[%u]`", top + i);
             return NULL;
         }
-        memcpy(data[i], row + left, sizeof(double) * n_cols);
+        memcpy(sub_data[i], row + left, sizeof(double) * n_cols);
     }
 
-    return new;
+    return sub;
 }
 
 
