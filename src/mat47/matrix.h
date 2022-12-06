@@ -63,7 +63,8 @@ typedef struct mat47 mat47_t;
  *     - Otherwise, a pointer to a copy of *m*.
  *
  * ERRORS:
- *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* or any of its internal
+ *       data pointers is null
  *     - :c:enumerator:`~mat47_errors.MAT47_ERR_ALLOC`: Unable to allocate memory
  */
 mat47_t *mat47_copy(const mat47_t *m);
@@ -128,7 +129,8 @@ intmax_t mat47_fprintf(
  *     - Otherwise, the element at ``m[row, col]``.
  *
  * ERRORS:
- *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* or any of its internal
+ *       data pointers is null
  *     - :c:enumerator:`~mat47_errors.MAT47_ERR_INDEX_OUT_OF_RANGE`: Either index is
  *       out of range
  */
@@ -231,7 +233,8 @@ mat47_t *mat47_init_double(uint n_rows, uint n_cols, double **restrict array);
  *     value: The new value of the element
  *
  * ERRORS:
- *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* or any of its internal
+ *       data pointers is null
  *     - :c:enumerator:`~mat47_errors.MAT47_ERR_INDEX_OUT_OF_RANGE`: Either index is
  *       out of range.
  */
