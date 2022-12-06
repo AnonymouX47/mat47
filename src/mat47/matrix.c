@@ -193,7 +193,7 @@ mat47_t *mat47_init_double(uint n_rows, uint n_cols, double **restrict array)
 
 mat47_t *mat47_copy(const mat47_t *m)
 {
-    if (check_ptr(m)) return NULL;
+    if (check_ptr(m) || check_ptr(m->data)) return NULL;
     return mat47_init_double(m->n_rows, m->n_cols, m->data);
 }
 
@@ -216,8 +216,10 @@ void mat47_del(mat47_t *m)
 
 double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col)
 {
-    if (check_ptr(m)) return NAN;
-    if (check_row(m, row) || check_col(m, col)) return NAN;
+    if (check_ptr(m) || check_ptr(m->data)) return NAN;  // Null pointers
+    if (check_row(m, row) || check_col(m, col)) return NAN;  // Out-of-range indexes
+    // Null pointer (but the index must be validated first)
+    if (check_ptr(m->data[row - 1])) return NAN;
 
     return m->data[row - 1][col - 1];
 }
@@ -225,8 +227,10 @@ double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col)
 
 void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value)
 {
-    if (check_ptr(m)) return;
-    if (check_row(m, row) || check_col(m, col)) return;
+    if (check_ptr(m) || check_ptr(m->data)) return;  // Null pointers
+    if (check_row(m, row) || check_col(m, col)) return;  // Out-of-range indexes
+    // Null pointer (but the index must be validated first)
+    if (check_ptr(m->data[row - 1])) return;
 
     m->data[row - 1][col - 1] = value;
 }
