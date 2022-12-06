@@ -403,8 +403,9 @@ char *mat47_strerror(unsigned int errnum)
     static char *error_str[] = {
         [1] = "Unable to allocate memory",
         "Invalid zero-sized/empty result",
-        "Null pointer argument(s)",
+        "Null pointer",
         "Index out of range",
+        "Mismatch in dimension"
     };
 
     if (errnum >= sizeof_arr(error_str)) errnum = 0;

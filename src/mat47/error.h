@@ -36,14 +36,17 @@ enum mat47_errors {
     /** Raised when unable to allocate memory */
     MAT47_ERR_ALLOC = 1,
 
-    /** Raised when arguments would give in an invalid empty/zero-sized result */
+    /** Raised when arguments would give an invalid empty/zero-sized result */
     MAT47_ERR_ZERO_SIZE,
 
-    /** Raised when an argument is, or points to, a null pointer */
+    /** Raised when an argument is, or points to (recursively), a null pointer */
     MAT47_ERR_NULL_PTR,
 
     /** Raised for out-of-range index arguments */
-    MAT47_ERR_INDEX_OUT_OF_RANGE
+    MAT47_ERR_INDEX_OUT_OF_RANGE,
+
+    /** Raised when certain arguments have mismatching dimensions */
+    MAT47_ERR_DIM_MISMATCH
 };
 
 /**
