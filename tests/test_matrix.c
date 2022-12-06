@@ -156,12 +156,32 @@ TestInit(double)
 
 Test(copy, null_matrix_ptr)
 {
+    mat47_t *m;
+
     mat47_errno = 0;
     cr_assert_null(mat47_copy(NULL), "Null `m` is invalid");
     cr_assert_eq(
         mat47_errno, MAT47_ERR_NULL_PTR,
         "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
     );
+
+    mat47_errno = 0;
+    m = mat47_zero(1, 1);
+
+    cr_assert_eq(
+        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno)
+    );
+
+    m->data = NULL;
+    mat47_errno = 0;
+    mat47_get_elem(m, 1, 1);
+
+    cr_assert_eq(
+        mat47_errno, MAT47_ERR_NULL_PTR,
+        "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
+    );
+
+    mat47_del(m);
 }
 
 Test(copy, copy)
@@ -199,12 +219,42 @@ Test(copy, copy)
 
 Test(elem, get_null_matrix_ptr)
 {
+    mat47_t *m;
+
     mat47_errno = 0;
     mat47_get_elem(NULL, 1, 1);
+
     cr_assert_eq(
         mat47_errno, MAT47_ERR_NULL_PTR,
         "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
     );
+
+    mat47_errno = 0;
+    m = mat47_zero(1, 1);
+
+    cr_assert_eq(
+        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno)
+    );
+
+    m->data[0] = NULL;
+    mat47_errno = 0;
+    mat47_get_elem(m, 1, 1);
+
+    cr_assert_eq(
+        mat47_errno, MAT47_ERR_NULL_PTR,
+        "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
+    );
+
+    m->data = NULL;
+    mat47_errno = 0;
+    mat47_get_elem(m, 1, 1);
+
+    cr_assert_eq(
+        mat47_errno, MAT47_ERR_NULL_PTR,
+        "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
+    );
+
+    mat47_del(m);
 }
 
 Test(elem, get)
@@ -256,12 +306,42 @@ Test(elem, get)
 
 Test(elem, set_null_matrix_ptr)
 {
+    mat47_t *m;
+
     mat47_errno = 0;
     mat47_set_elem(NULL, 1, 1, 0.0);
+
     cr_assert_eq(
         mat47_errno, MAT47_ERR_NULL_PTR,
         "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
     );
+
+    mat47_errno = 0;
+    m = mat47_zero(1, 1);
+
+    cr_assert_eq(
+        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno)
+    );
+
+    m->data[0] = NULL;
+    mat47_errno = 0;
+    mat47_set_elem(m, 1, 1, 0.0);
+
+    cr_assert_eq(
+        mat47_errno, MAT47_ERR_NULL_PTR,
+        "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
+    );
+
+    m->data = NULL;
+    mat47_errno = 0;
+    mat47_set_elem(m, 1, 1, 0.0);
+
+    cr_assert_eq(
+        mat47_errno, MAT47_ERR_NULL_PTR,
+        "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
+    );
+
+    mat47_del(m);
 }
 
 Test(elem, set)
@@ -316,12 +396,42 @@ Test(elem, set)
 
 Test(submat, get_null_matrix_ptr)
 {
+    mat47_t *m;
+
     mat47_errno = 0;
     mat47_get_submat(NULL, 1, 1, 1, 1);
+
     cr_assert_eq(
         mat47_errno, MAT47_ERR_NULL_PTR,
         "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
     );
+
+    mat47_errno = 0;
+    m = mat47_zero(1, 1);
+
+    cr_assert_eq(
+        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno)
+    );
+
+    m->data[0] = NULL;
+    mat47_errno = 0;
+    mat47_get_submat(m, 1, 1, 1, 1);
+
+    cr_assert_eq(
+        mat47_errno, MAT47_ERR_NULL_PTR,
+        "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
+    );
+
+    m->data = NULL;
+    mat47_errno = 0;
+    mat47_get_submat(m, 1, 1, 1, 1);
+
+    cr_assert_eq(
+        mat47_errno, MAT47_ERR_NULL_PTR,
+        "%u (%s) was raised", mat47_errno, mat47_strerror(mat47_errno)
+    );
+
+    mat47_del(m);
 }
 
 Test(submat, get_index_out_of_range)
