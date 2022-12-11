@@ -12,7 +12,8 @@
 \
     cr_assert_eq( \
         mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno) \
-    )
+    ); \
+    cr_assert_not_null(m, "`" #m "` is null")
 
 #define assert_null_ret_yes(ptr, mat47_f, ...) \
     cr_assert_null(mat47_f(__VA_ARGS__), "`" #ptr " = NULL` is invalid")
@@ -155,15 +156,13 @@ Test(init, null_array)
 Test(init, T) \
 { \
     unsigned int i, j; \
-    mat47_t *m; \
     T a[3][2] = {{-128, -1}, {0, 1}, {2, 127}}; \
+    mat47_t *m; \
 \
-    mat47_errno = 0; \
-    m = mat47_init(sizeof_arr(a), sizeof_arr(a[0]), ((T *[3]){a[0], a[1], a[2]})); \
-\
-    cr_assert_eq( \
-        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno) \
+    create_matrix( \
+        m, mat47_init, sizeof_arr(a), sizeof_arr(a[0]), ((T *[3]){a[0], a[1], a[2]}) \
     ); \
+\
     for (i = 0; i < sizeof_arr(a); i++) \
         for (j = 0; j < sizeof_arr(a[0]); j++) \
             cr_assert_eq( \
@@ -200,22 +199,13 @@ Test(copy, null_matrix_ptr)
 Test(copy, copy)
 {
     unsigned int i, j;
-    mat47_t *m1, *m2;
     int a[3][2] = {{-128, -1}, {0, 1}, {2, 127}};
+    mat47_t *m1, *m2;
 
-    mat47_errno = 0;
-    m1 = mat47_init(sizeof_arr(a), sizeof_arr(a[0]), ((int *[3]){a[0], a[1], a[2]}));
-
-    cr_assert_eq(
-        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno)
+    create_matrix(
+        m1, mat47_init, sizeof_arr(a), sizeof_arr(a[0]), ((int *[3]){a[0], a[1], a[2]})
     );
-
-    m2 = mat47_copy(m1);
-
-    cr_assert_eq(
-        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno)
-    );
-    cr_assert_not_null(m2, "`m2` is null");
+    create_matrix(m2, mat47_copy, m1);
 
     for (i = 0; i < sizeof_arr(a); i++)
         for (j = 0; j < sizeof_arr(a[0]); j++)
@@ -249,11 +239,9 @@ Test(elem, get)
     };
     mat47_t *m;
 
-    mat47_errno = 0;
-    m = mat47_init(sizeof_arr(a), sizeof_arr(a[0]), ((double *[3]){a[0], a[1], a[2]}));
-
-    cr_assert_eq(
-        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno)
+    create_matrix(
+        m, mat47_init,
+        sizeof_arr(a), sizeof_arr(a[0]), ((double *[3]){a[0], a[1], a[2]})
     );
 
     for (i = 0; i < sizeof_arr(indexes); i++) {
@@ -301,12 +289,7 @@ Test(elem, set)
     };
     mat47_t *m;
 
-    mat47_errno = 0;
-    m = mat47_zero(sizeof_arr(a), sizeof_arr(a[0]));
-
-    cr_assert_eq(
-        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno)
-    );
+    create_matrix(m, mat47_zero, sizeof_arr(a), sizeof_arr(a[0]));
 
     for (i = 0; i < sizeof_arr(indexes); i++) {
         mat47_errno = 0;
@@ -348,12 +331,7 @@ Test(submat, get_index_out_of_range)
     char *index_names[4] = {"top", "left", "bottom", "right"};
     mat47_t *m;
 
-    mat47_errno = 0;
-    m = mat47_zero(4, 4);
-
-    cr_assert_eq(
-        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno)
-    );
+    create_matrix(m, mat47_zero, 4, 4);
 
     for (j = 0; j < sizeof_arr(indexes); j++) {
         for (i = 0; i < 4; i++) {
@@ -387,12 +365,7 @@ Test(submat, get_zero_size)
     };
     mat47_t *m;
 
-    mat47_errno = 0;
-    m = mat47_zero(4, 4);
-
-    cr_assert_eq(
-        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno)
-    );
+    create_matrix(m, mat47_zero, 4, 4);
 
     for (i = 0; i < sizeof_arr(indexes); i++) {
         mat47_errno = 0;
@@ -431,12 +404,7 @@ Test(submat, get)
     };
     mat47_t *m, *m_sub;
 
-    mat47_errno = 0;
-    m = mat47_init(4, 4, ((double *[4]){a[0], a[1], a[2], a[3]}));
-
-    cr_assert_eq(
-        mat47_errno, 0, "Error creating matrix: (%s)", mat47_strerror(mat47_errno)
-    );
+    create_matrix(m, mat47_init, 4, 4, ((double *[4]){a[0], a[1], a[2], a[3]}));
 
     for (n = 0; n < sizeof_arr(indexes); n++) {
         top = indexes[n][0][0]; left = indexes[n][0][1];
