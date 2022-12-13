@@ -455,3 +455,74 @@ Test(submat, get)
     }
     mat47_del(m);
 }
+
+Test(submat, set_null_matrix_ptr)
+{
+    mat47_t *m_sub;
+
+    create_matrix(m_sub, mat47_zero, 1, 1);
+    // Test `m`
+    assert_null_martix_ptr(no, mat47_set_submat, 1, 1, 1, 1, m_sub);
+    // Test `sub`
+    assert_null_ptr(sub, no, mat47_set_submat, m_sub, 1, 1, 1, 1, NULL);
+    mat47_del(m_sub);
+}
+
+Test_submat_index_out_of_range(set, m)
+
+Test_submat_zero_size(set, m)
+
+Test(submat, set)
+{
+    unsigned int n, i, j, u, v, top, left, bottom, right, n_rows, n_cols;
+    double a[4][4] = {
+        {-128, -64, -32, -1},
+        {1, 2, 3, 4},
+        {5, 6, 7, 8},
+        {16, 32, 64, 127}
+    };
+    unsigned int indexes[][3][2] = {
+        // {top, left}, {bottom, right}, {n_rows, n_cols}
+        {{1, 1}, {1, 1}, {1, 1}},
+        {{4, 4}, {4, 4}, {1, 1}},
+        {{1, 1}, {4, 4}, {4, 4}},
+        {{1, 1}, {3, 2}, {3, 2}},
+        {{3, 2}, {4, 4}, {2, 3}},
+        {{2, 2}, {3, 3}, {2, 2}},
+        {{2, 2}, {2, 2}, {1, 1}}
+    };
+    mat47_t *m, *sub;
+
+    for (n = 0; n < sizeof_arr(indexes); n++) {
+        top = indexes[n][0][0]; left = indexes[n][0][1];
+        bottom = indexes[n][1][0]; right = indexes[n][1][1];
+        n_rows = indexes[n][2][0]; n_cols = indexes[n][2][1];
+
+        create_matrix(m, mat47_init, 4, 4, ((double *[4]){a[0], a[1], a[2], a[3]}));
+        create_matrix(sub, mat47_zero, n_rows, n_cols);
+
+        mat47_errno = 0;
+        mat47_set_submat(m, top, left, bottom, right, sub);
+
+        cr_assert_eq(
+            mat47_errno, 0,
+            "[%u:%u , %u:%u]: %s",
+            top, bottom, left, right, mat47_strerror(mat47_errno)
+        );
+
+        // Zero-based indexing
+        --top; --left;
+        for (u = (i = 0) + top; i < n_rows; i++, u++) {
+            for (v = (j = 0) + left; j < n_cols; j++, v++) {
+                cr_assert_eq(
+                    sub->data[i][j], m->data[u][v],
+                    "[%u:%u , %u:%u]: sub[%u,%u] = %f, m[%u,%u] = %f",
+                    top + 1, bottom, left + 1, right,
+                    i + 1, j + 1, sub->data[i][j], u + 1, v + 1, m->data[u][v]
+                );
+            }
+        }
+        mat47_del(sub);
+        mat47_del(m);
+    }
+}
