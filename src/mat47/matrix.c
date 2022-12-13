@@ -308,6 +308,8 @@ mat47_set_submat
     // Dimension mismatch
     if (check_eq(n_rows, sub->n_rows) || check_eq(n_cols, sub->n_cols)) return;
 
+    if (m == sub) return;  // Same matrix
+
     data = m->data;
     sub_data = sub->data;
     --top; --left;  // Change to zero-based
