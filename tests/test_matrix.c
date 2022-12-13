@@ -15,15 +15,15 @@
     ); \
     cr_assert_not_null(m, "`" #m "` is null")
 
-#define assert_null_ret_yes(ptr, mat47_f, ...) \
-    cr_assert_null(mat47_f(__VA_ARGS__), "`" #ptr " = NULL` is invalid")
+#define assert_null_ret_yes(arg, mat47_f, ...) \
+    cr_assert_null(mat47_f(__VA_ARGS__), "`" #arg "` is invalid")
 
 #define assert_null_ret_no(_, mat47_f, ...) \
     mat47_f(__VA_ARGS__)
 
 #define assert_null_ptr(ptr, chk_ret, mat47_f, ...) \
     mat47_errno = 0; \
-    assert_null_ret_##chk_ret(ptr, mat47_f, ##__VA_ARGS__); \
+    assert_null_ret_##chk_ret(ptr = NULL, mat47_f, ##__VA_ARGS__); \
 \
     cr_assert_eq( \
         mat47_errno, MAT47_ERR_NULL_PTR, \
@@ -310,68 +310,87 @@ Test(elem, set)
 
 /* submat */
 
+#define assert_get_submat_null_ret assert_null_ret_yes
+#define assert_set_submat_null_ret assert_null_ret_no
+
+#define Test_submat_index_out_of_range(get_set, ...) \
+Test(submat, get_set##_index_out_of_range) \
+{ \
+    unsigned int i, j, indexes[] = {0, 5, UINT_MAX}; \
+    char *index_names[4] = {"top", "left", "bottom", "right"}; \
+    mat47_t *m; \
+\
+    create_matrix(m, mat47_zero, 4, 4); \
+\
+    for (j = 0; j < sizeof_arr(indexes); j++) { \
+        for (i = 0; i < 4; i++) { \
+            unsigned int args[4] = {1, 1, 1, 1}; \
+\
+            args[i] = indexes[j]; \
+            mat47_errno = 0; \
+            assert_##get_set##_submat_null_ret( \
+                out-of-range index, \
+                mat47_##get_set##_submat, \
+                m, args[0], args[1], args[2], args[3], ##__VA_ARGS__ \
+            ); \
+\
+            cr_assert_eq( \
+                mat47_errno, MAT47_ERR_INDEX_OUT_OF_RANGE, \
+                "%s = %u; error: %u (%s)", \
+                index_names[i], indexes[j], mat47_errno, mat47_strerror(mat47_errno) \
+            ); \
+        } \
+    } \
+\
+    mat47_del(m); \
+}
+
+#define Test_submat_zero_size(get_set, ...) \
+Test(submat, get_set##_zero_size) \
+{ \
+    unsigned int i, indexes[][4] = { \
+        /* top, left, bottom, right */ \
+        {2, 1, 1, 1}, \
+        {1, 2, 1, 1}, \
+        {3, 1, 1, 1}, \
+        {1, 3, 1, 1}, \
+        {4, 1, 2, 1}, \
+        {1, 4, 1, 3}, \
+    }; \
+    mat47_t *m; \
+\
+    create_matrix(m, mat47_zero, 4, 4); \
+\
+    for (i = 0; i < sizeof_arr(indexes); i++) { \
+        mat47_errno = 0; \
+        assert_##get_set##_submat_null_ret( \
+            zero size, \
+            mat47_##get_set##_submat, \
+            m, indexes[i][0], indexes[i][1], indexes[i][2], indexes[i][3], \
+            ##__VA_ARGS__ \
+        ); \
+\
+        cr_assert_eq( \
+            mat47_errno, MAT47_ERR_ZERO_SIZE, \
+            "[%u:%u , %u:%u]; %u (%s) was raised", \
+            /* top:bottom, left:right */ \
+            indexes[i][0], indexes[i][2], indexes[i][1], indexes[i][3], \
+            mat47_errno, mat47_strerror(mat47_errno) \
+        ); \
+    }; \
+\
+    mat47_del(m); \
+}
+
+
 Test(submat, get_null_matrix_ptr)
 {
     assert_null_martix_ptr(yes, mat47_get_submat, 1, 1, 1, 1);
 }
 
-Test(submat, get_index_out_of_range)
-{
-    unsigned int i, j, indexes[] = {0, 5, UINT_MAX};
-    char *index_names[4] = {"top", "left", "bottom", "right"};
-    mat47_t *m;
+Test_submat_index_out_of_range(get)
 
-    create_matrix(m, mat47_zero, 4, 4);
-
-    for (j = 0; j < sizeof_arr(indexes); j++) {
-        for (i = 0; i < 4; i++) {
-            unsigned int args[4] = {1, 1, 1, 1};
-
-            args[i] = indexes[j];
-            mat47_errno = 0;
-            mat47_get_submat(m, args[0], args[1], args[2], args[3]);
-
-            cr_assert_eq(
-                mat47_errno, MAT47_ERR_INDEX_OUT_OF_RANGE,
-                "%s = %u; error: %u (%s)",
-                index_names[i], indexes[j], mat47_errno, mat47_strerror(mat47_errno)
-            );
-        }
-    }
-
-    mat47_del(m);
-}
-
-Test(submat, get_zero_size)
-{
-    unsigned int i, indexes[][4] = {
-        // top, left, bottom, right
-        {2, 1, 1, 1},
-        {1, 2, 1, 1},
-        {3, 1, 1, 1},
-        {1, 3, 1, 1},
-        {4, 1, 2, 1},
-        {1, 4, 1, 3},
-    };
-    mat47_t *m;
-
-    create_matrix(m, mat47_zero, 4, 4);
-
-    for (i = 0; i < sizeof_arr(indexes); i++) {
-        mat47_errno = 0;
-        mat47_get_submat(m, indexes[i][0], indexes[i][1], indexes[i][2], indexes[i][3]);
-
-        cr_assert_eq(
-            mat47_errno, MAT47_ERR_ZERO_SIZE,
-            "[%u:%u , %u:%u]; %u (%s) was raised",
-            //top:bottom, left:right
-            indexes[i][0], indexes[i][2], indexes[i][1], indexes[i][3],
-            mat47_errno, mat47_strerror(mat47_errno)
-        );
-    };
-
-    mat47_del(m);
-}
+Test_submat_zero_size(get)
 
 Test(submat, get)
 {
@@ -392,7 +411,7 @@ Test(submat, get)
         {{2, 2}, {3, 3}, {2, 2}},
         {{2, 2}, {2, 2}, {1, 1}}
     };
-    mat47_t *m, *m_sub;
+    mat47_t *m, *sub;
 
     create_matrix(m, mat47_init, 4, 4, ((double *[4]){a[0], a[1], a[2], a[3]}));
 
@@ -402,7 +421,7 @@ Test(submat, get)
         n_rows = indexes[n][2][0]; n_cols = indexes[n][2][1];
 
         mat47_errno = 0;
-        m_sub = mat47_get_submat(m, top, left, bottom, right);
+        sub = mat47_get_submat(m, top, left, bottom, right);
 
         cr_assert_eq(
             mat47_errno, 0,
@@ -411,13 +430,13 @@ Test(submat, get)
         );
 
         cr_assert_eq(
-            m_sub->n_rows, n_rows,
-            "[%u:%u , %u:%u]: n_rows=%u", top, bottom, left, right, m_sub->n_rows
+            sub->n_rows, n_rows,
+            "[%u:%u , %u:%u]: n_rows=%u", top, bottom, left, right, sub->n_rows
         );
 
         cr_assert_eq(
-            m_sub->n_cols, n_cols,
-            "[%u:%u , %u:%u]: n_cols=%u", top, bottom, left, right, m_sub->n_cols
+            sub->n_cols, n_cols,
+            "[%u:%u , %u:%u]: n_cols=%u", top, bottom, left, right, sub->n_cols
         );
 
         // Zero-based indexing
@@ -425,16 +444,14 @@ Test(submat, get)
         for (u = (i = 0) + top; i < n_rows; i++, u++) {
             for (v = (j = 0) + left; j < n_cols; j++, v++) {
                 cr_assert_eq(
-                    m_sub->data[i][j], m->data[u][v],
-                    "[%u:%u , %u:%u]: m_sub[%u][%u] = %f, m[%u][%u] = %f",
+                    sub->data[i][j], m->data[u][v],
+                    "[%u:%u , %u:%u]: sub[%u,%u] = %f, m[%u,%u] = %f",
                     top + 1, bottom, left + 1, right,
-                    i + 1, j + 1, m_sub->data[i][j], u + 1, v + 1, m->data[u][v]
+                    i + 1, j + 1, sub->data[i][j], u + 1, v + 1, m->data[u][v]
                 );
             }
         }
-
-        mat47_del(m_sub);
+        mat47_del(sub);
     }
-
     mat47_del(m);
 }
