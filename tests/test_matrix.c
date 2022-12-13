@@ -197,13 +197,30 @@ Test(copy, copy)
     );
     create_matrix(m2, mat47_copy, m1);
 
+    cr_assert_neq(m1->data, m2->data, "Overlapping data");
+    for (i = 0; i < sizeof_arr(a); i++)
+        cr_assert_neq(m1->data[i], m2->data[i], "Overlapping row: i = %u", i);
+
     for (i = 0; i < sizeof_arr(a); i++)
         for (j = 0; j < sizeof_arr(a[0]); j++)
             cr_assert_eq(
-                (double)m2->data[i][j], m1->data[i][j],
+                m2->data[i][j], m1->data[i][j],
                 "`m2 = %f`, `m1 = %f`: i=%u, j=%u",
                 m2->data[i][j], m1->data[i][j], i, j
             );
+
+    m2->data[0][0] = 0.1;
+    cr_assert_neq(
+        m2->data[0][0], m1->data[0][0],
+        "m1[1,1] == m2[1,1] == %f", m1->data[0][0]
+    );
+
+    m1->data[sizeof_arr(a) - 1][sizeof_arr(a[0]) - 1] = 0.01;
+    cr_assert_neq(
+        m2->data[sizeof_arr(a) - 1][sizeof_arr(a[0]) - 1],
+        m1->data[sizeof_arr(a) - 1][sizeof_arr(a[0]) - 1],
+        "m1[m,n] == m2[m,n] == %f", m1->data[sizeof_arr(a) - 1][sizeof_arr(a[0]) - 1]
+    );
 
     mat47_del(m1); mat47_del(m2);
 }
