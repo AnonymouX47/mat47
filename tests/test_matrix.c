@@ -31,17 +31,7 @@
     )
 
 #define assert_null_martix_ptr(chk_ret, mat47_f, ...) \
-    { \
-        mat47_t *m; \
-\
-        create_matrix(m, mat47_zero, 1, 1); \
-        m->data[0] = NULL; \
-        assert_null_ptr(m->data[i], chk_ret, mat47_f, m, ##__VA_ARGS__); \
-        m->data = NULL; \
-        assert_null_ptr(m->data, chk_ret, mat47_f, m, ##__VA_ARGS__); \
-        m = NULL; \
-        assert_null_ptr(m, chk_ret, mat47_f, m, ##__VA_ARGS__); \
-    }
+    assert_null_ptr(m, chk_ret, mat47_f, NULL, ##__VA_ARGS__)
 
 
 /* new */

@@ -63,8 +63,7 @@ typedef struct mat47 mat47_t;
  *     - Otherwise, a pointer to a copy of *m*.
  *
  * ERRORS:
- *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* or any of its internal
- *       data pointers is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* is null
  *     - :c:enumerator:`~mat47_errors.MAT47_ERR_ALLOC`: Unable to allocate memory
  */
 mat47_t *mat47_copy(const mat47_t *m);
@@ -129,8 +128,7 @@ intmax_t mat47_fprintf(
  *     - Otherwise, the element at ``m[row, col]``.
  *
  * ERRORS:
- *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* or any of its internal
- *       data pointers is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* is null
  *     - :c:enumerator:`~mat47_errors.MAT47_ERR_INDEX_OUT_OF_RANGE`: Either index is
  *       out of range
  */
@@ -151,8 +149,7 @@ double mat47_get_elem(const mat47_t *m, unsigned int row, unsigned int col);
  *     - Otherwise, a pointer to a new matrix equal to ``m[top:bottom , left:right]``.
  *
  * ERRORS:
- *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* or any of its internal
- *       data pointers is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* is null
  *     - :c:enumerator:`~mat47_errors.MAT47_ERR_INDEX_OUT_OF_RANGE`: Any index is
  *       out of range
  *     - :c:enumerator:`~mat47_errors.MAT47_ERR_ZERO_SIZE`: Either dimension of the
@@ -233,8 +230,7 @@ mat47_t *mat47_init_double(uint n_rows, uint n_cols, double **restrict array);
  *     value: The new value of the element
  *
  * ERRORS:
- *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* or any of its internal
- *       data pointers is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* is null
  *     - :c:enumerator:`~mat47_errors.MAT47_ERR_INDEX_OUT_OF_RANGE`: Either index is
  *       out of range.
  */
@@ -252,8 +248,7 @@ void mat47_set_elem(mat47_t *m, unsigned int row, unsigned int col, double value
  *     m: The matrix whose value the sub-matrix will be set to
  *
  * ERRORS:
- *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m*, *sub* or any of their
- *       internal data pointers is null
+ *     - :c:enumerator:`~mat47_errors.MAT47_ERR_NULL_PTR`: *m* or *sub* is null
  *     - :c:enumerator:`~mat47_errors.MAT47_ERR_INDEX_OUT_OF_RANGE`: Any index is
  *       out of range
  *     - :c:enumerator:`~mat47_errors.MAT47_ERR_ZERO_SIZE`: Either dimension of the
