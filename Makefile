@@ -1,19 +1,18 @@
-proj = mat47
+proj := mat47
 
 .PHONY: docs
 
-CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -c -o $@
-TEST_LDFLAGS = -lcriterion
-BUILD = build
-SRC = src/mat47
+TEST_LDFLAGS := -lcriterion
+BUILD := build
+SRC := src/mat47
 
-headers = $(wildcard $(SRC)/*.h)
-sources = $(wildcard $(SRC)/*.c)
-objects = $(patsubst %.c,%.o,$(subst $(SRC),$(BUILD),$(sources)))
+headers := $(wildcard $(SRC)/*.h)
+sources := $(wildcard $(SRC)/*.c)
+objects := $(patsubst %.c,%.o,$(subst $(SRC),$(BUILD),$(sources)))
 
-test_sources = $(wildcard tests/*.c)
-test_objects = $(patsubst %.c,%.o,$(subst tests,$(BUILD),$(test_sources)))
+test_sources := $(wildcard tests/*.c)
+test_objects := $(patsubst %.c,%.o,$(subst tests,$(BUILD),$(test_sources)))
 
 # Manual tests (untracked)
 
@@ -50,4 +49,3 @@ docs:
 
 clean:
 	rm -vrf bin $(BUILD)
-
