@@ -7,6 +7,9 @@ TEST_LDFLAGS := -lcriterion
 BUILD := build
 SRC := src/mat47
 
+MAT47_LOG := DEBUG ERROR
+MAT47_LOG_FLAGS := $(patsubst %,-D'MAT47_LOG_%',$(MAT47_LOG))
+
 headers := $(wildcard $(SRC)/*.h)
 sources := $(wildcard $(SRC)/*.c)
 objects := $(patsubst %.c,%.o,$(subst $(SRC),$(BUILD),$(sources)))
@@ -26,7 +29,7 @@ $(BUILD)/_test.o: _test.c $(SRC)/matrix.h $(SRC)/error.h
 	$(CC) $(CFLAGS) $<
 
 $(BUILD)/%.o: $(SRC)/%.c $(headers)
-	$(CC) $(CFLAGS) $<
+	$(CC) $(CFLAGS) $(MAT47_LOG_FLAGS) $<
 
 # Automated tests (tracked)
 

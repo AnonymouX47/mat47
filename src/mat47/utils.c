@@ -8,10 +8,12 @@
 #include <stdio.h>
 #include <time.h>
 
-bool MAT47_LOG_DEBUG;
-bool MAT47_LOG_ERROR;
 FILE *MAT47_LOG_FILE;
 
+int mat47__return_zero(void)
+{
+    return 0;
+}
 
 char *mat47__get_timestamp(void)
 {

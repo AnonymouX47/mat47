@@ -43,12 +43,18 @@
     mat47__get_timestamp(), __LINE__, __func__, ##__VA_ARGS__ \
 )
 
-#define debug(msg, ...) (MAT47_LOG_DEBUG ? log_("DEBUG", msg, ##__VA_ARGS__) : 0) \
+#ifdef MAT47_LOG_DEBUG
+#define debug(msg, ...) log_("DEBUG", msg, ##__VA_ARGS__)
+#else
+#define debug(...) mat47__return_zero()
+#endif
 
-#define error(extra_msg, ...) (MAT47_LOG_ERROR \
-    ? log_("ERROR", "%s" extra_msg, mat47_strerror(mat47_errno), ##__VA_ARGS__) \
-    : 0 \
-)
+#ifdef MAT47_LOG_ERROR
+#define error(extra_msg, ...) \
+    log_("ERROR", "%s" extra_msg, mat47_strerror(mat47_errno), ##__VA_ARGS__)
+#else
+#define error(...) mat47__return_zero()
+#endif
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) > (b) ? (a) : (b))
@@ -64,9 +70,9 @@
     )(n, arr)
 
 
-extern _Bool MAT47_LOG_DEBUG;
-extern _Bool MAT47_LOG_ERROR;
 extern FILE *MAT47_LOG_FILE;
+
+int mat47__return_zero(void);
 
 #define _sum \
     intmax_t sum = 0; \
